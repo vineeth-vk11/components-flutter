@@ -6,7 +6,7 @@
 </picture>
 <!--END_BANNER_IMAGE-->
 
-# components-flutter
+# Flutter Components
 
 <!--BEGIN_DESCRIPTION-->Use this SDK to add real-time video, audio and data features to your Flutter app. By connecting to a self- or cloud-hosted <a href="https://livekit.io/">LiveKit</a> server, you can quickly build applications like interactive live streaming or video calls with just a few lines of code.<!--END_DESCRIPTION-->
 
