@@ -60,6 +60,7 @@ class MyHomePage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         const CameraPreview(),
+                        const CameraToggleButton(),
                         const MicrophoneToggleButton(),
                         Text(
                           'Connected: ${roomCtx.connectState}',

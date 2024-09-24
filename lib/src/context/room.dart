@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:livekit_client/livekit_client.dart';
+import 'package:collection/collection.dart';
 
 class RoomContext extends ChangeNotifier {
   RoomContext({
@@ -97,13 +98,33 @@ class RoomContext extends ChangeNotifier {
 
   bool get connected => _room.connectionState == ConnectionState.connected;
 
-  void enableMicrophone() {
-    _room.localParticipant?.setMicrophoneEnabled(true);
+  VideoTrack? _localVideoTrack;
+  VideoTrack? get localVideoTrack => _localVideoTrack;
+
+  bool get isCameraEnabled =>
+      _room.localParticipant?.isCameraEnabled() ?? false;
+
+  void enableCamera() async {
+    var pub = await _room.localParticipant?.setCameraEnabled(true);
+    if (pub != null) {
+      _localVideoTrack = pub.track as VideoTrack;
+    }
     notifyListeners();
   }
 
-  void disableMicrophone() {
-    _room.localParticipant?.setMicrophoneEnabled(false);
+  void disableCamera() async {
+    await _room.localParticipant?.setCameraEnabled(false);
+    _localVideoTrack = null;
+    notifyListeners();
+  }
+
+  void enableMicrophone() async {
+    await _room.localParticipant?.setMicrophoneEnabled(true);
+    notifyListeners();
+  }
+
+  void disableMicrophone() async {
+    await _room.localParticipant?.setMicrophoneEnabled(false);
     notifyListeners();
   }
 
