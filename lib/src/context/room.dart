@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:livekit_client/livekit_client.dart';
-import 'package:collection/collection.dart';
 
 class RoomContext extends ChangeNotifier {
   RoomContext({
@@ -21,18 +20,24 @@ class RoomContext extends ChangeNotifier {
         notifyListeners();
       })
       ..on<ParticipantConnectedEvent>((event) {
-        addParticipant(event.participant);
+        notifyListeners();
       })
       ..on<ParticipantDisconnectedEvent>((event) {
-        removeParticipant(event.participant);
+        notifyListeners();
+      })
+      ..on<LocalTrackPublishedEvent>((event) {
+        notifyListeners();
       })
       ..on<TrackPublishedEvent>((event) {
-        addTrack(event.publication);
+        notifyListeners();
       })
       ..on<TrackUnpublishedEvent>((event) {
-        removeTrack(event.publication);
+        notifyListeners();
       });
+
+    connect();
   }
+
   @override
   void dispose() {
     _listener.dispose();
@@ -51,6 +56,7 @@ class RoomContext extends ChangeNotifier {
 
   Future<void> disconnect() async {
     await _room.disconnect();
+    _localVideoTrack = null;
     notifyListeners();
   }
 
@@ -84,15 +90,9 @@ class RoomContext extends ChangeNotifier {
 
   int get participantCount => participants.length;
 
-  final List<Participant> participants = [];
-
-  final List<TrackPublication> tracks = [];
-
-  List<LocalTrackPublication> get localTracks =>
-      tracks.whereType<LocalTrackPublication>().toList();
-
-  List<RemoteTrackPublication> get remoteTracks =>
-      tracks.whereType<RemoteTrackPublication>().toList();
+  List<Participant> get participants => [
+        ..._room.remoteParticipants.values,
+      ];
 
   ConnectionState get connectState => _room.connectionState;
 
@@ -125,26 +125,6 @@ class RoomContext extends ChangeNotifier {
 
   void disableMicrophone() async {
     await _room.localParticipant?.setMicrophoneEnabled(false);
-    notifyListeners();
-  }
-
-  void addParticipant(Participant participant) {
-    participants.add(participant);
-    notifyListeners();
-  }
-
-  void removeParticipant(Participant participant) {
-    participants.remove(participant);
-    notifyListeners();
-  }
-
-  void addTrack(TrackPublication track) {
-    tracks.add(track);
-    notifyListeners();
-  }
-
-  void removeTrack(TrackPublication track) {
-    tracks.remove(track);
     notifyListeners();
   }
 }

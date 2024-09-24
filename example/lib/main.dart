@@ -40,7 +40,7 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return LivekitRoom(
       roomContext: RoomContext(
-        url: 'ws://localhost:7880',
+        url: 'ws://192.168.0.176:7880',
         token:
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Mjc5MjM2MjIsImlzcyI6IkFQSXJramtRYVZRSjVERSIsIm5hbWUiOiJmZiIsIm5iZiI6MTcyNjEyMzYyMiwic3ViIjoiZmYiLCJ2aWRlbyI6eyJyb29tIjoibGl2ZSIsInJvb21Kb2luIjp0cnVlfX0.dFzRZA88EeVIgb99f304NxcjsfL-16W9dbf05V6rOvQ',
       ),
@@ -51,7 +51,7 @@ class MyHomePage extends StatelessWidget {
                     title: Selector<RoomContext, String>(
                       selector: (context, roomCtx) => roomCtx.roomName ?? '',
                       builder: (context, roomName, child) => Text(
-                        'Room: $roomName',
+                        'Room: $roomName Connected: ${roomCtx.connectState}',
                       ),
                     ),
                   ),
@@ -62,20 +62,21 @@ class MyHomePage extends StatelessWidget {
                         const CameraPreview(),
                         const CameraToggleButton(),
                         const MicrophoneToggleButton(),
-                        Text(
-                          'Connected: ${roomCtx.connectState}',
-                        ),
-                        Text(
-                          'Room Name: ${roomCtx.roomName ?? ''}',
+                        SizedBox(
+                          height: 240,
+                          width: 320,
+                          child: ParticipantListBuilder(
+                            builder: (context) => const ParticipantWidget(),
+                          ),
                         ),
                         Text(
                           'Participants: ${roomCtx.participants.length}',
                         ),
                         Text(
-                          'Local Tracks: ${roomCtx.localTracks.length}',
+                          'Local Video Enabled: ${roomCtx.isCameraEnabled}',
                         ),
                         Text(
-                          'Remote Tracks: ${roomCtx.remoteTracks.length}',
+                          'Local Mic Enabled: ${roomCtx.isMicrophoneEnabled}',
                         ),
                       ],
                     ),
@@ -87,7 +88,7 @@ class MyHomePage extends StatelessWidget {
                           : roomCtx.connect();
                     },
                     tooltip: roomCtx.connected ? 'Disconnect' : 'Connect',
-                    child: const Icon(Icons.login),
+                    child: Icon(roomCtx.connected ? Icons.close : Icons.logout),
                   ), // This trailing comma makes auto-formatting nicer for build methods.
                 ));
       },
