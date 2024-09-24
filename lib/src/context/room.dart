@@ -3,19 +3,20 @@ import 'package:livekit_client/livekit_client.dart';
 
 class RoomContext extends ChangeNotifier {
   RoomContext({
-    required this.url,
-    required this.token,
+    required String url,
+    required String token,
     RoomOptions roomOptions = const RoomOptions(),
-  }) {
-    room = Room(roomOptions: roomOptions);
-    _listener = room.createListener();
+    ConnectOptions? connectOptions,
+  })  : _url = url,
+        _token = token,
+        _connectOptions = connectOptions {
+    _room = Room(roomOptions: roomOptions);
+    _listener = _room.createListener();
     _listener
       ..on<RoomConnectedEvent>((event) {
-        _connected = true;
         notifyListeners();
       })
       ..on<RoomDisconnectedEvent>((event) {
-        _connected = false;
         notifyListeners();
       })
       ..on<ParticipantConnectedEvent>((event) {
@@ -31,16 +32,28 @@ class RoomContext extends ChangeNotifier {
         removeTrack(event.publication);
       });
   }
+  @override
+  void dispose() {
+    _listener.dispose();
+    super.dispose();
+  }
 
   Future<void> connect() async {
-    await room.connect(url, token);
+    await _room.connect(
+      _url,
+      _token,
+      fastConnectOptions: _fastConnectOptions,
+      connectOptions: _connectOptions,
+    );
     notifyListeners();
   }
 
   Future<void> disconnect() async {
-    await room.disconnect();
+    await _room.disconnect();
     notifyListeners();
   }
+
+  final ConnectOptions? _connectOptions;
 
   FastConnectOptions? _fastConnectOptions;
 
@@ -53,13 +66,22 @@ class RoomContext extends ChangeNotifier {
 
   late EventsListener<RoomEvent> _listener;
 
-  final String url;
+  final String _url;
 
-  final String token;
+  final String _token;
 
-  late Room room;
+  Room get room => _room;
 
-  String? get roomName => room.name;
+  late Room _room;
+
+  bool get isMicrophoneEnabled =>
+      _room.localParticipant?.isMicrophoneEnabled() ?? false;
+
+  String? get roomName => _room.name;
+
+  String? get roomMetadata => _room.metadata;
+
+  int get participantCount => participants.length;
 
   final List<Participant> participants = [];
 
@@ -71,8 +93,19 @@ class RoomContext extends ChangeNotifier {
   List<RemoteTrackPublication> get remoteTracks =>
       tracks.whereType<RemoteTrackPublication>().toList();
 
-  bool _connected = false;
-  bool get connected => _connected;
+  ConnectionState get connectState => _room.connectionState;
+
+  bool get connected => _room.connectionState == ConnectionState.connected;
+
+  void enableMicrophone() {
+    _room.localParticipant?.setMicrophoneEnabled(true);
+    notifyListeners();
+  }
+
+  void disableMicrophone() {
+    _room.localParticipant?.setMicrophoneEnabled(false);
+    notifyListeners();
+  }
 
   void addParticipant(Participant participant) {
     participants.add(participant);

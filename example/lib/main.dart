@@ -40,7 +40,7 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return LivekitRoom(
       roomContext: RoomContext(
-        url: 'ws://192.168.0.141:7880',
+        url: 'ws://localhost:7880',
         token:
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Mjc5MjM2MjIsImlzcyI6IkFQSXJramtRYVZRSjVERSIsIm5hbWUiOiJmZiIsIm5iZiI6MTcyNjEyMzYyMiwic3ViIjoiZmYiLCJ2aWRlbyI6eyJyb29tIjoibGl2ZSIsInJvb21Kb2luIjp0cnVlfX0.dFzRZA88EeVIgb99f304NxcjsfL-16W9dbf05V6rOvQ',
       ),
@@ -48,16 +48,21 @@ class MyHomePage extends StatelessWidget {
         return Consumer<RoomContext>(
             builder: (context, roomCtx, child) => Scaffold(
                   appBar: AppBar(
-                    title: Text(
-                        'Room State:  ${roomCtx.connected.toString()} [${roomCtx.roomName ?? ''}] '),
+                    title: Selector<RoomContext, String>(
+                      selector: (context, roomCtx) => roomCtx.roomName ?? '',
+                      builder: (context, roomName, child) => Text(
+                        'Room: $roomName',
+                      ),
+                    ),
                   ),
                   body: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         const CameraPreview(),
+                        const MicrophoneToggleButton(),
                         Text(
-                          'Connected: ${roomCtx.connected}',
+                          'Connected: ${roomCtx.connectState}',
                         ),
                         Text(
                           'Room Name: ${roomCtx.roomName ?? ''}',
