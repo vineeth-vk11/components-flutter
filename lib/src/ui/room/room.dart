@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+
 import 'package:provider/provider.dart';
 
 import '../../context/room.dart';
+import '../../types/types.dart';
 
 class LivekitRoom extends StatefulWidget {
   const LivekitRoom(
@@ -15,6 +17,18 @@ class LivekitRoom extends StatefulWidget {
 }
 
 class LivekitRoomState extends State<LivekitRoom> {
+  @override
+  void initState() {
+    super.initState();
+    widget.roomContext.fToast.init(fToastNavigatorKey.currentContext!);
+  }
+
+  @override
+  void dispose() {
+    widget.roomContext.fToast.removeQueuedCustomToasts();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(

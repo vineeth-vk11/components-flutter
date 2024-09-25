@@ -1,4 +1,17 @@
 include: package:flutter_lints/flutter.yaml
 
-# Additional information about this file can be found at
-# https://dart.dev/guides/language/analysis-options
+analyzer:
+  errors:
+    constant_identifier_names: ignore
+    no_wildcard_variable_uses: ignore
+    use_super_parameters: ignore
+
+linter:
+  rules:
+    #
+    # Additional recommended rules
+    #
+    prefer_single_quotes: true
+    unnecessary_brace_in_string_interps: false
+    unawaited_futures: true
+    depend_on_referenced_packages: false

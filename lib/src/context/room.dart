@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart' hide ConnectionState;
-import 'package:livekit_client/livekit_client.dart';
-import 'package:flutter_webrtc/flutter_webrtc.dart' as rtc;
+
 import 'package:flutter_background/flutter_background.dart';
+import 'package:flutter_webrtc/flutter_webrtc.dart' as rtc;
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:livekit_client/livekit_client.dart';
+
+// ignore: depend_on_referenced_packages
 
 class RoomContext extends ChangeNotifier {
   RoomContext({
@@ -16,9 +20,31 @@ class RoomContext extends ChangeNotifier {
     _listener = _room.createListener();
     _listener
       ..on<RoomConnectedEvent>((event) {
+        fToast.showToast(
+            child: toast(room.connectionState),
+            gravity: ToastGravity.TOP,
+            toastDuration: const Duration(seconds: 2),
+            positionedToastBuilder: (context, child) {
+              return Positioned(
+                top: 16.0,
+                right: 16.0,
+                child: child,
+              );
+            });
         notifyListeners();
       })
       ..on<RoomDisconnectedEvent>((event) {
+        fToast.showToast(
+            child: toast(room.connectionState),
+            gravity: ToastGravity.TOP,
+            toastDuration: const Duration(seconds: 2),
+            positionedToastBuilder: (context, child) {
+              return Positioned(
+                top: 16.0,
+                right: 16.0,
+                child: child,
+              );
+            });
         notifyListeners();
       })
       ..on<ParticipantConnectedEvent>((event) {
@@ -61,6 +87,8 @@ class RoomContext extends ChangeNotifier {
     _localVideoTrack = null;
     notifyListeners();
   }
+
+  final FToast fToast = FToast();
 
   final ConnectOptions? _connectOptions;
 
@@ -220,4 +248,34 @@ class RoomContext extends ChangeNotifier {
     await _room.localParticipant?.setScreenShareEnabled(false);
     notifyListeners();
   }
+
+  Widget toast(ConnectionState state) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(25.0),
+            color: {
+              ConnectionState.connected: Colors.green,
+              ConnectionState.disconnected: Colors.grey,
+              ConnectionState.connecting: Colors.yellowAccent,
+              ConnectionState.reconnecting: Colors.orangeAccent,
+            }[state]),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon({
+              ConnectionState.connected: Icons.check,
+              ConnectionState.disconnected: Icons.close,
+              ConnectionState.connecting: Icons.hourglass_top,
+              ConnectionState.reconnecting: Icons.refresh,
+            }[state]),
+            const SizedBox(width: 12.0),
+            Text('${{
+              ConnectionState.connected: 'Connected',
+              ConnectionState.disconnected: 'Disconnected',
+              ConnectionState.connecting: 'Connecting',
+              ConnectionState.reconnecting: 'Reconnecting',
+            }[state]}'),
+          ],
+        ),
+      );
 }

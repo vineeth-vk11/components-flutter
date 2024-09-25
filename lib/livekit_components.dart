@@ -1,12 +1,14 @@
 export 'src/context/room.dart';
 export 'src/context/participant.dart';
 export 'src/context/permission.dart';
+export 'src/types/types.dart';
 export 'src/ui/room/camera_preview.dart';
 export 'src/ui/buttons/microphone_toggle.dart';
 export 'src/ui/buttons/camera_toggle.dart';
 export 'src/ui/buttons/disconnect_button.dart';
 export 'src/ui/buttons/screenshare_toggle.dart';
 export 'src/ui/room/room.dart';
+export 'src/ui/room/control_bar.dart';
 export 'src/ui/participant/participant.dart';
 export 'src/ui/participant/participant_list_builder.dart';
 export 'src/ui/participant/status_lable.dart';

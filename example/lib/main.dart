@@ -3,6 +3,7 @@ import 'package:livekit_components/livekit_components.dart';
 import 'package:provider/provider.dart';
 import 'package:logging/logging.dart';
 import 'package:intl/intl.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 void main() {
   final format = DateFormat('HH:mm:ss');
@@ -13,7 +14,13 @@ void main() {
   });
 
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
+  runApp(
+    MaterialApp(
+      builder: FToastBuilder(),
+      home: const MyApp(),
+      navigatorKey: fToastNavigatorKey,
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -60,31 +67,12 @@ class MyHomePage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         const CameraPreview(),
-                        SizedBox(
-                          height: 240,
-                          width: 320,
+                        Expanded(
                           child: ParticipantListBuilder(
                             builder: (context) => const ParticipantWidget(),
                           ),
                         ),
-                        Text(
-                          'Participants: ${roomCtx.participants.length}',
-                        ),
-                        Text(
-                          'Local Video Enabled: ${roomCtx.isCameraEnabled}',
-                        ),
-                        Text(
-                          'Local Mic Enabled: ${roomCtx.isMicrophoneEnabled}',
-                        ),
-                        const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            MicrophoneToggleButton(),
-                            CameraToggleButton(),
-                            ScreenShareToggleButton(),
-                            DisconnectButton(),
-                          ],
-                        ),
+                        const ControlBar(),
                       ],
                     ),
                   ),

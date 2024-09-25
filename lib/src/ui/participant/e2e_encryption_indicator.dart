@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:provider/provider.dart';
 
 import '../../context/participant.dart';
@@ -18,7 +19,7 @@ class E2EEncryptionIndicator extends StatelessWidget {
           padding: const EdgeInsets.only(left: 5),
           child: Icon(
             isEncrypted ? Icons.lock : Icons.lock_open,
-            color: isEncrypted ? Colors.green : Colors.red,
+            color: Colors.white54,
             size: 16,
           ),
         ),

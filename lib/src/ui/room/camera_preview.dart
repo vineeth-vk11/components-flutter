@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+
 import 'package:livekit_client/livekit_client.dart';
-import 'package:livekit_components/src/context/room.dart';
 import 'package:provider/provider.dart';
+
+import 'package:livekit_components/src/context/room.dart';
 
 class CameraPreview extends StatelessWidget {
   const CameraPreview({super.key});
