@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../context/participant.dart';
 import 'connection_quality_indicator.dart';
 import 'e2e_encryption_indicator.dart';
+import 'status_lable.dart';
 
 class ParticipantWidget extends StatelessWidget {
   const ParticipantWidget({
@@ -28,7 +29,7 @@ class ParticipantWidget extends StatelessWidget {
                     Icons.videocam_off,
                     color: Colors.grey,
                   ),
-            Text(participantContext.identity),
+            const StatusLable(),
             const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

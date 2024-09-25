@@ -9,7 +9,7 @@ void main() {
   // configure logs for debugging
   Logger.root.level = Level.FINE;
   Logger.root.onRecord.listen((record) {
-    print('${format.format(record.time)}: ${record.message}');
+    //print('${format.format(record.time)}: ${record.message}');
   });
 
   WidgetsFlutterBinding.ensureInitialized();
@@ -60,8 +60,6 @@ class MyHomePage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         const CameraPreview(),
-                        const CameraToggleButton(),
-                        const MicrophoneToggleButton(),
                         SizedBox(
                           height: 240,
                           width: 320,
@@ -78,18 +76,18 @@ class MyHomePage extends StatelessWidget {
                         Text(
                           'Local Mic Enabled: ${roomCtx.isMicrophoneEnabled}',
                         ),
+                        const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            MicrophoneToggleButton(),
+                            CameraToggleButton(),
+                            ScreenShareToggleButton(),
+                            DisconnectButton(),
+                          ],
+                        ),
                       ],
                     ),
                   ),
-                  floatingActionButton: FloatingActionButton(
-                    onPressed: () {
-                      roomCtx.connected
-                          ? roomCtx.disconnect()
-                          : roomCtx.connect();
-                    },
-                    tooltip: roomCtx.connected ? 'Disconnect' : 'Connect',
-                    child: Icon(roomCtx.connected ? Icons.close : Icons.logout),
-                  ), // This trailing comma makes auto-formatting nicer for build methods.
                 ));
       },
     );

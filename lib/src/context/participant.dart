@@ -45,6 +45,10 @@ class ParticipantContext extends ChangeNotifier {
     super.dispose();
   }
 
+  bool get isSpeaking => _participant.isSpeaking;
+
+  bool get isMuted => _participant.isMuted;
+
   ConnectionQuality get connectionQuality => _participant.connectionQuality;
 
   bool get isEncrypted =>
@@ -76,7 +80,8 @@ class ParticipantContext extends ChangeNotifier {
 
   ParticipantPermissions? get permissions => _participant.permissions;
 
-  String? get name => _participant.name;
+  String get name =>
+      _participant.name != '' ? _participant.name : _participant.identity;
 
   bool get muted => _participant.isMuted;
 

@@ -1,5 +1,7 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart' hide ConnectionState;
 import 'package:livekit_client/livekit_client.dart';
+import 'package:flutter_webrtc/flutter_webrtc.dart' as rtc;
+import 'package:flutter_background/flutter_background.dart';
 
 class RoomContext extends ChangeNotifier {
   RoomContext({
@@ -125,6 +127,97 @@ class RoomContext extends ChangeNotifier {
 
   void disableMicrophone() async {
     await _room.localParticipant?.setMicrophoneEnabled(false);
+    notifyListeners();
+  }
+
+  bool get isScreenShareEnabled =>
+      _room.localParticipant?.isScreenShareEnabled() ?? false;
+
+  Future<void> enableScreenShare(context) async {
+    if (lkPlatformIsDesktop()) {
+      try {
+        final source = await showDialog<rtc.DesktopCapturerSource>(
+          context: context,
+          builder: (context) => ScreenSelectDialog(),
+        );
+        if (source == null) {
+          print('cancelled screenshare');
+          return;
+        }
+        print('DesktopCapturerSource: ${source.id}');
+        var track = await LocalVideoTrack.createScreenShareTrack(
+          ScreenShareCaptureOptions(
+            sourceId: source.id,
+            maxFrameRate: 15.0,
+          ),
+        );
+        await _room.localParticipant?.publishVideoTrack(track);
+      } catch (e) {
+        print('could not publish video: $e');
+      }
+      return;
+    }
+    if (lkPlatformIs(PlatformType.android)) {
+      // Android specific
+      bool hasCapturePermission = await rtc.Helper.requestCapturePermission();
+      if (!hasCapturePermission) {
+        return;
+      }
+
+      requestBackgroundPermission([bool isRetry = false]) async {
+        // Required for android screenshare.
+        try {
+          bool hasPermissions = await FlutterBackground.hasPermissions;
+          if (!isRetry) {
+            const androidConfig = FlutterBackgroundAndroidConfig(
+              notificationTitle: 'Screen Sharing',
+              notificationText: 'LiveKit Example is sharing the screen.',
+              notificationImportance: AndroidNotificationImportance.normal,
+              notificationIcon: AndroidResource(
+                  name: 'livekit_ic_launcher', defType: 'mipmap'),
+            );
+            hasPermissions = await FlutterBackground.initialize(
+                androidConfig: androidConfig);
+          }
+          if (hasPermissions &&
+              !FlutterBackground.isBackgroundExecutionEnabled) {
+            await FlutterBackground.enableBackgroundExecution();
+          }
+        } catch (e) {
+          if (!isRetry) {
+            return await Future<void>.delayed(const Duration(seconds: 1),
+                () => requestBackgroundPermission(true));
+          }
+          print('could not publish video: $e');
+        }
+      }
+
+      await requestBackgroundPermission();
+    }
+    if (lkPlatformIs(PlatformType.iOS)) {
+      var track = await LocalVideoTrack.createScreenShareTrack(
+        const ScreenShareCaptureOptions(
+          useiOSBroadcastExtension: true,
+          maxFrameRate: 15.0,
+        ),
+      );
+      await _room.localParticipant?.publishVideoTrack(track);
+      return;
+    }
+
+    if (lkPlatformIsWebMobile()) {
+      await context
+          .showErrorDialog('Screen share is not supported on mobile web');
+      return;
+    }
+
+    await _room.localParticipant
+        ?.setScreenShareEnabled(true, captureScreenAudio: true);
+    notifyListeners();
+  }
+
+  Future<void> disableScreenShare() async {
+    await _room.localParticipant?.setScreenShareEnabled(false);
     notifyListeners();
   }
 }
