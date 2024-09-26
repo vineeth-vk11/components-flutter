@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-
 import 'package:provider/provider.dart';
-
 import 'package:livekit_components/livekit_components.dart';
 
 class ControlBar extends StatelessWidget {
@@ -22,16 +20,26 @@ class ControlBar extends StatelessWidget {
   final bool settings;
   @override
   Widget build(BuildContext context) {
-    return Consumer<RoomContext>(builder: (context, roomCtx, child) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          if (microphone) const MicrophoneToggleButton(),
-          if (camera) const CameraToggleButton(),
-          if (screenShare) const ScreenShareToggleButton(),
-          if (leave) const DisconnectButton(),
-        ],
-      );
-    });
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        vertical: 15,
+        horizontal: 15,
+      ),
+      child: Consumer<RoomContext>(
+        builder: (context, roomCtx, child) {
+          return Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 5,
+            runSpacing: 5,
+            children: [
+              if (microphone) const MicrophoneToggleButton(),
+              if (camera) const CameraToggleButton(),
+              if (screenShare) const ScreenShareToggleButton(),
+              if (leave) const DisconnectButton(),
+            ],
+          );
+        },
+      ),
+    );
   }
 }

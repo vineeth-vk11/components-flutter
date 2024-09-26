@@ -6,6 +6,12 @@ class ParticipantContext extends ChangeNotifier {
   ParticipantContext(this._participant)
       : _listener = _participant.createListener() {
     _listener
+      ..on<LocalTrackPublishedEvent>((event) {
+        notifyListeners();
+      })
+      ..on<LocalTrackUnpublishedEvent>((event) {
+        notifyListeners();
+      })
       ..on<TrackPublishedEvent>((event) {
         notifyListeners();
       })
@@ -19,7 +25,11 @@ class ParticipantContext extends ChangeNotifier {
         notifyListeners();
       })
       ..on<TrackE2EEStateEvent>((event) {
-        // notifyListeners();
+        notifyListeners();
+      })
+      ..on<SpeakingChangedEvent>((event) {
+        _isSpeaking = event.speaking;
+        notifyListeners();
       })
       ..on<TrackMutedEvent>((event) {
         notifyListeners();
@@ -46,7 +56,8 @@ class ParticipantContext extends ChangeNotifier {
     super.dispose();
   }
 
-  bool get isSpeaking => _participant.isSpeaking;
+  bool _isSpeaking = false;
+  bool get isSpeaking => _isSpeaking;
 
   bool get isMuted => _participant.isMuted;
 

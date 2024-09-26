@@ -41,6 +41,7 @@ dependencies:
   logging: ^1.2.0
   provider: ^6.1.2
   fluttertoast: ^8.2.8
+  responsive_builder: ^0.7.1
 
 dev_dependencies:
   flutter_test:

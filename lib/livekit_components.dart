@@ -1,6 +1,7 @@
 export 'src/context/room.dart';
 export 'src/context/participant.dart';
 export 'src/context/permission.dart';
+export 'src/types/theme.dart';
 export 'src/types/types.dart';
 export 'src/ui/room/camera_preview.dart';
 export 'src/ui/buttons/microphone_toggle.dart';
@@ -11,4 +12,4 @@ export 'src/ui/room/room.dart';
 export 'src/ui/room/control_bar.dart';
 export 'src/ui/participant/participant.dart';
 export 'src/ui/participant/participant_list_builder.dart';
-export 'src/ui/participant/status_lable.dart';
+export 'src/ui/participant/participant_tile.dart';

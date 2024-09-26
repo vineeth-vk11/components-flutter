@@ -31,10 +31,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
+      theme: LiveKitTheme().buildThemeData(context),
       home: const MyHomePage(),
     );
   }
@@ -47,7 +44,7 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return LivekitRoom(
       roomContext: RoomContext(
-        url: 'ws://192.168.0.176:7880',
+        url: 'ws://192.168.2.141:7880',
         token:
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Mjc5MjM2MjIsImlzcyI6IkFQSXJramtRYVZRSjVERSIsIm5hbWUiOiJmZiIsIm5iZiI6MTcyNjEyMzYyMiwic3ViIjoiZmYiLCJ2aWRlbyI6eyJyb29tIjoibGl2ZSIsInJvb21Kb2luIjp0cnVlfX0.dFzRZA88EeVIgb99f304NxcjsfL-16W9dbf05V6rOvQ',
       ),
@@ -59,6 +56,7 @@ class MyHomePage extends StatelessWidget {
                       selector: (context, roomCtx) => roomCtx.roomName ?? '',
                       builder: (context, roomName, child) => Text(
                         'Room: $roomName Connected: ${roomCtx.connectState}',
+                        style: Theme.of(context).textTheme.bodyLarge,
                       ),
                     ),
                   ),
@@ -66,10 +64,25 @@ class MyHomePage extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        const CameraPreview(),
                         Expanded(
                           child: ParticipantListBuilder(
-                            builder: (context) => const ParticipantWidget(),
+                            builder: (context, participants) => GridView(
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 3, childAspectRatio: 1.5),
+                              children: participants.map(
+                                (p) {
+                                  var ctx = ParticipantContext(p);
+                                  return ChangeNotifierProvider(
+                                    create: (_) => ctx,
+                                    child: const Padding(
+                                      padding: EdgeInsets.all(2.0),
+                                      child: ParticipantWidget(),
+                                    ),
+                                  );
+                                },
+                              ).toList(),
+                            ),
                           ),
                         ),
                         const ControlBar(),

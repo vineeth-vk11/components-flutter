@@ -26,7 +26,7 @@ class RoomContext extends ChangeNotifier {
             toastDuration: const Duration(seconds: 2),
             positionedToastBuilder: (context, child) {
               return Positioned(
-                top: 16.0,
+                top: 32.0,
                 right: 16.0,
                 child: child,
               );
@@ -40,7 +40,7 @@ class RoomContext extends ChangeNotifier {
             toastDuration: const Duration(seconds: 2),
             positionedToastBuilder: (context, child) {
               return Positioned(
-                top: 16.0,
+                top: 32.0,
                 right: 16.0,
                 child: child,
               );
@@ -120,9 +120,19 @@ class RoomContext extends ChangeNotifier {
 
   int get participantCount => participants.length;
 
-  List<Participant> get participants => [
-        ..._room.remoteParticipants.values,
-      ];
+  List<Participant> get participants {
+    if (!connected) {
+      return [];
+    }
+
+    if (_room.localParticipant == null) {
+      return _room.remoteParticipants.values.toList();
+    }
+    return <Participant>[
+      _room.localParticipant!,
+      ..._room.remoteParticipants.values,
+    ];
+  }
 
   ConnectionState get connectState => _room.connectionState;
 

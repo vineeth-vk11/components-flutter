@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-
+import 'dart:math' as math;
 import 'package:livekit_client/livekit_client.dart';
 import 'package:provider/provider.dart';
 
 import '../../context/participant.dart';
-import 'connection_quality_indicator.dart';
-import 'e2e_encryption_indicator.dart';
-import 'status_lable.dart';
+
+import '../../types/theme.dart';
+import 'is_speaking_indicator.dart';
+import 'participant_tile.dart';
+import 'track_list_builder.dart';
 
 class ParticipantWidget extends StatelessWidget {
   const ParticipantWidget({
@@ -16,28 +18,48 @@ class ParticipantWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<ParticipantContext>(
-      builder: (context, participantContext, child) =>
-          Selector<ParticipantContext, List<VideoTrack>>(
-        selector: (context, tracks) => participantContext.videoTracks,
-        builder: (context, tracks, child) => Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+      builder: (context, participantContext, child) => IsSpeakingIndicator(
+        builder: (context) => Stack(
           children: [
-            tracks.isNotEmpty
-                ? Expanded(
-                    child: VideoTrackRenderer(tracks.first),
-                  )
-                : const Icon(
-                    Icons.videocam_off,
-                    color: Colors.grey,
-                  ),
-            const StatusLable(),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ConnectionQualityIndicator(),
-                E2EEncryptionIndicator(),
-              ],
+            /*
+            const Expanded(
+              child: Center(
+                child: CircularProgressIndicator(
+                  value: null,
+                  strokeWidth: 7.0,
+                ),
+              ),
+            ),*/
+            TrackListBuilder(
+              builder: (context, tracks) {
+                return tracks.isNotEmpty
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          for (final track in tracks)
+                            if (track.track != null)
+                              Expanded(
+                                child: VideoTrackRenderer(
+                                    track.track as VideoTrack),
+                              )
+                        ],
+                      )
+                    : Expanded(
+                        child: Center(
+                          child: LayoutBuilder(
+                            builder: (context, constraints) => Icon(
+                              Icons.videocam_off_outlined,
+                              color: LKColors.lkBlue,
+                              size: math.min(constraints.maxHeight,
+                                      constraints.maxWidth) *
+                                  0.3,
+                            ),
+                          ),
+                        ),
+                      );
+              },
             ),
+            const ParticipantTile(),
           ],
         ),
       ),
