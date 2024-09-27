@@ -14,6 +14,7 @@ class ParticipantListBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('ParticipantListBuilder build');
     return Consumer<RoomContext>(
       builder: (context, roomCtx, child) {
         return Selector<RoomContext, List<Participant>>(

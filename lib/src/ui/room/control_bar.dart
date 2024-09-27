@@ -22,19 +22,18 @@ class ControlBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(
-        vertical: 15,
-        horizontal: 15,
+        vertical: 20,
+        horizontal: 20,
       ),
       child: Consumer<RoomContext>(
         builder: (context, roomCtx, child) {
-          return Wrap(
-            alignment: WrapAlignment.center,
-            spacing: 5,
-            runSpacing: 5,
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (microphone) const MicrophoneToggleButton(),
               if (camera) const CameraToggleButton(),
               if (screenShare) const ScreenShareToggleButton(),
+              if (chat) const ChatToggleButton(),
               if (leave) const DisconnectButton(),
             ],
           );

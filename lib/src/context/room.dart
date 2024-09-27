@@ -152,6 +152,20 @@ class RoomContext extends ChangeNotifier {
     notifyListeners();
   }
 
+  bool _chatEnabled = true;
+
+  bool get isChatEnabled => _chatEnabled;
+
+  void enableChat() {
+    _chatEnabled = true;
+    notifyListeners();
+  }
+
+  void disableChat() {
+    _chatEnabled = false;
+    notifyListeners();
+  }
+
   void disableCamera() async {
     await _room.localParticipant?.setCameraEnabled(false);
     _localVideoTrack = null;

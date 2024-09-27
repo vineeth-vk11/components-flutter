@@ -18,10 +18,13 @@ class ParticipantWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<ParticipantContext>(
-      builder: (context, participantContext, child) => IsSpeakingIndicator(
-        builder: (context) => Stack(
-          children: [
-            /*
+      builder: (context, participantContext, child) {
+        print(
+            'ParticipantWidget build ${participantContext.participant.identity}');
+        return IsSpeakingIndicator(
+          builder: (context) => Stack(
+            children: [
+              /*
             const Expanded(
               child: Center(
                 child: CircularProgressIndicator(
@@ -30,39 +33,40 @@ class ParticipantWidget extends StatelessWidget {
                 ),
               ),
             ),*/
-            TrackListBuilder(
-              builder: (context, tracks) {
-                return tracks.isNotEmpty
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          for (final track in tracks)
-                            if (track.track != null)
-                              Expanded(
-                                child: VideoTrackRenderer(
-                                    track.track as VideoTrack),
-                              )
-                        ],
-                      )
-                    : Expanded(
-                        child: Center(
-                          child: LayoutBuilder(
-                            builder: (context, constraints) => Icon(
-                              Icons.videocam_off_outlined,
-                              color: LKColors.lkBlue,
-                              size: math.min(constraints.maxHeight,
-                                      constraints.maxWidth) *
-                                  0.3,
+              TrackListBuilder(
+                builder: (context, tracks) {
+                  return tracks.isNotEmpty
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            for (final track in tracks)
+                              if (track.track != null)
+                                Expanded(
+                                  child: VideoTrackRenderer(
+                                      track.track as VideoTrack),
+                                )
+                          ],
+                        )
+                      : Expanded(
+                          child: Center(
+                            child: LayoutBuilder(
+                              builder: (context, constraints) => Icon(
+                                Icons.videocam_off_outlined,
+                                color: LKColors.lkBlue,
+                                size: math.min(constraints.maxHeight,
+                                        constraints.maxWidth) *
+                                    0.3,
+                              ),
                             ),
                           ),
-                        ),
-                      );
-              },
-            ),
-            const ParticipantTile(),
-          ],
-        ),
-      ),
+                        );
+                },
+              ),
+              const ParticipantTile(),
+            ],
+          ),
+        );
+      },
     );
   }
 }
