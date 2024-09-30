@@ -42,6 +42,7 @@ dependencies:
   provider: ^6.1.2
   fluttertoast: ^8.2.8
   responsive_builder: ^0.7.1
+  http: ^1.2.2
 
 dev_dependencies:
   flutter_test:

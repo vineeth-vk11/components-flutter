@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:livekit_client/livekit_client.dart';
 import 'package:livekit_components/livekit_components.dart';
 
 import 'package:provider/provider.dart';
@@ -6,6 +9,42 @@ import 'package:provider/provider.dart';
 import 'package:chat_bubbles/chat_bubbles.dart';
 
 DateTime now = DateTime.now();
+
+// topic: lk-chat-topic
+class ChatMessage {
+  final String message;
+  final int timestamp;
+  final String id;
+
+  final Participant? participant;
+
+  ChatMessage({
+    required this.message,
+    required this.timestamp,
+    required this.id,
+    this.participant,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'message': message,
+      'timestamp': timestamp,
+      'id': id,
+    };
+  }
+
+  String toJson() => const JsonEncoder().convert(toMap());
+
+  factory ChatMessage.fromMap(
+      Map<String, dynamic> map, Participant? participant) {
+    return ChatMessage(
+      message: map['message'],
+      timestamp: map['timestamp'],
+      id: map['id'],
+      participant: participant,
+    );
+  }
+}
 
 class Chat extends StatelessWidget {
   const Chat({super.key});

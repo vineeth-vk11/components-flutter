@@ -5,18 +5,22 @@ import 'package:flutter_webrtc/flutter_webrtc.dart' as rtc;
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:livekit_client/livekit_client.dart';
 
+import 'media_device.dart';
+
 // ignore: depend_on_referenced_packages
 
 class RoomContext extends ChangeNotifier {
   RoomContext({
-    required String url,
-    required String token,
+    String? url,
+    String? token,
+    bool connect = false,
     RoomOptions roomOptions = const RoomOptions(),
     ConnectOptions? connectOptions,
   })  : _url = url,
         _token = token,
         _connectOptions = connectOptions {
     _room = Room(roomOptions: roomOptions);
+    mediaDevices = MediaDevicesContext(roomContext: this);
     _listener = _room.createListener();
     _listener
       ..on<RoomConnectedEvent>((event) {
@@ -63,7 +67,14 @@ class RoomContext extends ChangeNotifier {
         notifyListeners();
       });
 
-    connect();
+    if (connect && url != null && token != null) {
+      this.connect(
+        url: url,
+        token: token,
+      );
+      _url = url;
+      _token = token;
+    }
   }
 
   @override
@@ -72,21 +83,34 @@ class RoomContext extends ChangeNotifier {
     super.dispose();
   }
 
-  Future<void> connect() async {
+  Future<void> connect({
+    String? url,
+    String? token,
+  }) async {
+    if (mediaDevices.cameraOpened || mediaDevices.microphoneOpened) {
+      _fastConnectOptions = FastConnectOptions(
+        microphone: TrackOption(track: mediaDevices.localAudioTrack!),
+        camera: TrackOption(track: mediaDevices.localVideoTrack!),
+      );
+    }
+
     await _room.connect(
-      _url,
-      _token,
+      _url ?? url!,
+      _token ?? token!,
       fastConnectOptions: _fastConnectOptions,
       connectOptions: _connectOptions,
     );
+    _url ??= url;
+    _token ??= token;
     notifyListeners();
   }
 
   Future<void> disconnect() async {
     await _room.disconnect();
-    _localVideoTrack = null;
     notifyListeners();
   }
+
+  late MediaDevicesContext mediaDevices;
 
   final FToast fToast = FToast();
 
@@ -94,18 +118,11 @@ class RoomContext extends ChangeNotifier {
 
   FastConnectOptions? _fastConnectOptions;
 
-  FastConnectOptions? get fastConnectOptions => _fastConnectOptions;
-
-  set fastConnectOptions(FastConnectOptions? value) {
-    _fastConnectOptions = value;
-    notifyListeners();
-  }
-
   late EventsListener<RoomEvent> _listener;
 
-  final String _url;
+  String? _url;
 
-  final String _token;
+  String? _token;
 
   Room get room => _room;
 
@@ -138,17 +155,16 @@ class RoomContext extends ChangeNotifier {
 
   bool get connected => _room.connectionState == ConnectionState.connected;
 
-  VideoTrack? _localVideoTrack;
-  VideoTrack? get localVideoTrack => _localVideoTrack;
-
   bool get isCameraEnabled =>
       _room.localParticipant?.isCameraEnabled() ?? false;
 
   void enableCamera() async {
-    var pub = await _room.localParticipant?.setCameraEnabled(true);
-    if (pub != null) {
-      _localVideoTrack = pub.track as VideoTrack;
-    }
+    await _room.localParticipant?.setCameraEnabled(true);
+    notifyListeners();
+  }
+
+  void disableCamera() async {
+    await _room.localParticipant?.setCameraEnabled(false);
     notifyListeners();
   }
 
@@ -163,12 +179,6 @@ class RoomContext extends ChangeNotifier {
 
   void disableChat() {
     _chatEnabled = false;
-    notifyListeners();
-  }
-
-  void disableCamera() async {
-    await _room.localParticipant?.setCameraEnabled(false);
-    _localVideoTrack = null;
     notifyListeners();
   }
 
