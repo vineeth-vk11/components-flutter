@@ -1,53 +1,37 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:livekit_client/livekit_client.dart';
 import 'package:livekit_components/livekit_components.dart';
+import 'package:livekit_components/src/context/chat.dart';
 
 import 'package:provider/provider.dart';
 
 import 'package:chat_bubbles/chat_bubbles.dart';
 
-DateTime now = DateTime.now();
-
-// topic: lk-chat-topic
-class ChatMessage {
-  final String message;
-  final int timestamp;
-  final String id;
-
-  final Participant? participant;
-
-  ChatMessage({
-    required this.message,
-    required this.timestamp,
-    required this.id,
-    this.participant,
-  });
-
-  Map<String, dynamic> toMap() {
-    return {
-      'message': message,
-      'timestamp': timestamp,
-      'id': id,
-    };
-  }
-
-  String toJson() => const JsonEncoder().convert(toMap());
-
-  factory ChatMessage.fromMap(
-      Map<String, dynamic> map, Participant? participant) {
-    return ChatMessage(
-      message: map['message'],
-      timestamp: map['timestamp'],
-      id: map['id'],
-      participant: participant,
-    );
-  }
-}
+import 'data_chip.dart';
 
 class Chat extends StatelessWidget {
   const Chat({super.key});
+
+  List<Widget> _buildMessages(List<ChatMessage> messages) {
+    List<Widget> msgWidgets = [];
+    int lastTimestamp = 0;
+    String lastPartcipantId = '';
+    for (ChatMessage msg in messages) {
+      if (msg.timestamp - lastTimestamp > 3000 || lastPartcipantId != msg.id) {
+        msgWidgets.add(CustomDateChip(
+            date: DateTime.fromMillisecondsSinceEpoch(msg.timestamp)));
+      }
+      msgWidgets.add(BubbleNormal(
+        text: msg.message,
+        color: const Color(0xFFE8E8EE),
+        tail: false,
+        isSender: msg.sender,
+      ));
+
+      lastTimestamp = msg.timestamp;
+      lastPartcipantId = msg.id;
+    }
+    return msgWidgets;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,63 +39,53 @@ class Chat extends StatelessWidget {
       return Container(
         color: LKColors.lkDarkBlue,
         padding: const EdgeInsets.all(1.0),
-        child: Stack(
+        child: Column(
           children: [
-            SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  DateChip(
-                    date: DateTime(now.year, now.month, now.day - 2),
+            Container(
+              height: 50.0,
+              padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const Expanded(
+                    child: Center(
+                      child: Text(
+                        'Messages',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
                   ),
-                  const BubbleSpecialThree(
-                    text: 'bubble special three without tail',
-                    color: Color(0xFFE8E8EE),
-                    tail: false,
-                    isSender: false,
-                  ),
-                  BubbleNormal(
-                    text: 'bubble normal without tail',
-                    color: const Color(0xFFE8E8EE),
-                    tail: false,
-                    sent: true,
-                    seen: true,
-                    delivered: true,
-                  ),
-                  DateChip(
-                    date: DateTime(now.year, now.month, now.day - 1),
-                  ),
-                  const BubbleSpecialOne(
-                    text: 'bubble special one without tail',
-                    tail: false,
-                    color: Color(0xFFE8E8EE),
-                    sent: true,
-                  ),
-                  DateChip(
-                    date: now,
-                  ),
-                  const BubbleSpecialTwo(
-                    text: 'bubble special tow without tail',
-                    tail: false,
-                    color: Color(0xFFE8E8EE),
-                    delivered: true,
-                  ),
-                  const BubbleSpecialThree(
-                    text: 'Alice:\nbubble special three without tail',
-                    color: Color(0xFFE8E8EE),
-                    tail: false,
-                    isSender: false,
-                  ),
-                  const SizedBox(
-                    height: 100,
+                  IconButton(
+                    onPressed: () {
+                      roomCtx.disableChat();
+                    },
+                    icon: const Icon(Icons.close),
                   )
                 ],
               ),
             ),
-            MessageBar(
-              messageBarColor: LKColors.lkDarkBlue,
-              replyWidgetColor: LKColors.lkDarkBlue,
-              onSend: (_) => print(_),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Selector<RoomContext, List<ChatMessage>>(
+                  selector: (context, messages) => roomCtx.messages,
+                  builder: (context, messages, child) => Column(
+                    children: _buildMessages(messages),
+                  ),
+                ),
+              ),
             ),
+            Container(
+              color: LKColors.lkDarkBlue,
+              padding: const EdgeInsets.symmetric(horizontal: 5.0),
+              child: MessageBar(
+                messageBarColor: LKColors.lkDarkBlue,
+                replyWidgetColor: LKColors.lkDarkBlue,
+                onSend: (msg) => roomCtx.sendMessage(msg),
+              ),
+            )
           ],
         ),
       );

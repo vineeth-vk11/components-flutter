@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:livekit_components/src/ui/buttons/leave_button.dart';
 import 'package:provider/provider.dart';
 import 'package:livekit_components/livekit_components.dart';
+
+import '../buttons/chat_button.dart';
+import '../buttons/screen_share_button.dart';
 
 class ControlBar extends StatelessWidget {
   const ControlBar(
@@ -18,23 +22,22 @@ class ControlBar extends StatelessWidget {
   final bool screenShare;
   final bool leave;
   final bool settings;
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        vertical: 20,
-        horizontal: 20,
-      ),
+    return SizedBox(
+      height: 80,
       child: Consumer<RoomContext>(
         builder: (context, roomCtx, child) {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          return Wrap(
+            runSpacing: 6,
+            direction: Axis.vertical,
             children: [
-              if (microphone) const MicrophoneToggleButton(),
-              if (camera) const CameraToggleButton(),
-              if (screenShare) const ScreenShareToggleButton(),
-              if (chat) const ChatToggleButton(),
-              if (leave) const DisconnectButton(),
+              if (microphone) const MicrophoneSelectButton(),
+              if (camera) const CameraSelectButton(),
+              if (screenShare) const ScreenShareButton(),
+              if (chat) const ChatButton(),
+              if (leave) const LeaveButton(),
             ],
           );
         },

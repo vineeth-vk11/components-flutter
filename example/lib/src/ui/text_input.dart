@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 
 class TextInput extends StatelessWidget {
-  TextInput({super.key, required this.onTextChanged, required this.hintText});
-  final TextEditingController _textController = TextEditingController();
+  TextInput(
+      {super.key,
+      required this.onTextChanged,
+      required this.hintText,
+      String? text})
+      : _textController = TextEditingController(text: text ?? '');
+
+  final TextEditingController _textController;
 
   final Function(String) onTextChanged;
 

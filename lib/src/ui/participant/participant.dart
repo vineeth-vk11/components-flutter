@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../context/participant.dart';
 
 import '../../types/theme.dart';
+import '../debug/logger.dart';
 import 'is_speaking_indicator.dart';
 import 'participant_tile.dart';
 import 'track_list_builder.dart';
@@ -19,7 +20,7 @@ class ParticipantWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ParticipantContext>(
       builder: (context, participantContext, child) {
-        print(
+        Debug.log(
             'ParticipantWidget build ${participantContext.participant.identity}');
         return IsSpeakingIndicator(
           builder: (context) => Stack(

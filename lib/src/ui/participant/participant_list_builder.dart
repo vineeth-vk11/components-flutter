@@ -4,6 +4,7 @@ import 'package:livekit_client/livekit_client.dart';
 import 'package:provider/provider.dart';
 
 import '../../../livekit_components.dart';
+import '../debug/logger.dart';
 
 typedef ParticipantListWidgetBuilder = Widget Function(
     BuildContext context, List<Participant>);
@@ -14,14 +15,15 @@ class ParticipantListBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('ParticipantListBuilder build');
+    Debug.log('ParticipantListBuilder build');
     return Consumer<RoomContext>(
       builder: (context, roomCtx, child) {
         return Selector<RoomContext, List<Participant>>(
-          selector: (context, participants) => roomCtx.participants,
-          builder: (context, participants, child) =>
-              builder(context, participants),
-        );
+            selector: (context, participants) => roomCtx.participants,
+            builder: (context, participants, child) {
+              Debug.log('participants ${participants.length}');
+              return builder(context, participants);
+            });
       },
     );
   }

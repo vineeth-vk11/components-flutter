@@ -22,7 +22,7 @@ class IsSpeakingIndicator extends StatelessWidget {
           foregroundDecoration: BoxDecoration(
             border: participantContext.isSpeaking
                 ? Border.all(
-                    width: 5,
+                    width: 3,
                     color: LKColors.lkBlue,
                   )
                 : null,

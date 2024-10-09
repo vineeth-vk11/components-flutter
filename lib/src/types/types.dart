@@ -1,5 +1,4 @@
 import 'package:flutter/widgets.dart';
-import 'package:provider/provider.dart';
 
 GlobalKey<NavigatorState> fToastNavigatorKey = GlobalKey<NavigatorState>();
 

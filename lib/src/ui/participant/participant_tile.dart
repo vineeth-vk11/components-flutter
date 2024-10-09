@@ -27,46 +27,43 @@ class ParticipantTile extends StatelessWidget {
         bottom: 0,
         left: 0,
         right: 0,
-        child: SizedBox(
-          height: 28,
-          child: Container(
-            color: Colors.black.withOpacity(0.6),
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  if (showMuteStatus)
-                    Selector<ParticipantContext, bool>(
-                      selector: (context, isMuted) =>
-                          participantContext.isMuted,
-                      builder: (context, isMuted, child) => isMuted
-                          ? const Flexible(
-                              child: Icon(
-                                Icons.mic_off,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 6),
+          color: Colors.black.withOpacity(0.6),
+          child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                if (showMuteStatus)
+                  Selector<ParticipantContext, bool>(
+                    selector: (context, isMuted) => participantContext.isMuted,
+                    builder: (context, isMuted, child) => isMuted
+                        ? const Icon(
+                            Icons.mic_off_sharp,
+                            color: Colors.white54,
+                            size: 20,
+                          )
+                        : const SizedBox(),
+                  ),
+                if (showName)
+                  Selector<ParticipantContext, String?>(
+                    selector: (context, name) => participantContext.name,
+                    builder: (context, name, child) => name != null
+                        ? Flexible(
+                            child: Text(
+                              name,
+                              style: const TextStyle(
                                 color: Colors.white54,
+                                fontSize: 16,
                               ),
-                            )
-                          : const SizedBox(),
-                    ),
-                  if (showName)
-                    Selector<ParticipantContext, String?>(
-                      selector: (context, name) => participantContext.name,
-                      builder: (context, name, child) => name != null
-                          ? Flexible(
-                              child: Text(
-                                name,
-                                style: const TextStyle(
-                                  color: Colors.white54,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            )
-                          : Container(),
-                    ),
-                  if (showConnectionQuality) const ConnectionQualityIndicator(),
-                  if (showE2EEStatus) const E2EEncryptionIndicator(),
-                ]),
-          ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          )
+                        : Container(),
+                  ),
+                if (showConnectionQuality) const ConnectionQualityIndicator(),
+                if (showE2EEStatus) const E2EEncryptionIndicator(),
+              ]),
         ),
       ),
     );

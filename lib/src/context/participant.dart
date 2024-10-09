@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 
 import 'package:livekit_client/livekit_client.dart';
 
+import '../ui/debug/logger.dart';
+
 class ParticipantContext extends ChangeNotifier {
   ParticipantContext(this._participant)
       : _listener = _participant.createListener() {
@@ -45,7 +47,7 @@ class ParticipantContext extends ChangeNotifier {
       })
       ..on<TranscriptionEvent>((e) {
         for (var seg in e.segments) {
-          print('Transcription: ${seg.text} ${seg.isFinal}');
+          Debug.log('Transcription: ${seg.text} ${seg.isFinal}');
         }
       });
   }

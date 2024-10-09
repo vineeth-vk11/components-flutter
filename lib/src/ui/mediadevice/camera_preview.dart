@@ -13,38 +13,35 @@ class CameraPreview extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<RoomContext>(
       builder: (context, roomCtx, child) {
-        return ChangeNotifierProvider(
-          create: (_) => roomCtx.mediaDevices,
-          child: Container(
-            width: 360,
-            height: 240,
-            color: LKColors.lkDarkBlue,
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Selector<MediaDevicesContext, LocalVideoTrack?>(
-                    selector: (context, md) => md.localVideoTrack,
-                    builder: (context, track, child) => track != null
-                        ? Expanded(
-                            child: VideoTrackRenderer(track),
-                          )
-                        : Expanded(
-                            child: Center(
-                              child: LayoutBuilder(
-                                builder: (context, constraints) => Icon(
-                                  Icons.videocam_off_outlined,
-                                  color: LKColors.lkBlue,
-                                  size: math.min(constraints.maxHeight,
-                                          constraints.maxWidth) *
-                                      0.33,
-                                ),
+        return Container(
+          width: 360,
+          height: 240,
+          color: LKColors.lkDarkBlue,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Selector<RoomContext, LocalVideoTrack?>(
+                  selector: (context, track) => roomCtx.localVideoTrack,
+                  builder: (context, track, child) => track != null
+                      ? Expanded(
+                          child: VideoTrackRenderer(track),
+                        )
+                      : Expanded(
+                          child: Center(
+                            child: LayoutBuilder(
+                              builder: (context, constraints) => Icon(
+                                Icons.videocam_off_outlined,
+                                color: LKColors.lkBlue,
+                                size: math.min(constraints.maxHeight,
+                                        constraints.maxWidth) *
+                                    0.33,
                               ),
                             ),
                           ),
-                  ),
-                ],
-              ),
+                        ),
+                ),
+              ],
             ),
           ),
         );

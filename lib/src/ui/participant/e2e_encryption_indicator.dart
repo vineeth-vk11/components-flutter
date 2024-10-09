@@ -20,7 +20,7 @@ class E2EEncryptionIndicator extends StatelessWidget {
           child: Icon(
             isEncrypted ? Icons.lock : Icons.lock_open,
             color: Colors.white54,
-            size: 16,
+            size: 20,
           ),
         ),
       ),

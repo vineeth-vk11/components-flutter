@@ -3,6 +3,7 @@ import 'package:livekit_client/livekit_client.dart';
 import 'package:provider/provider.dart';
 
 import '../../../livekit_components.dart';
+import '../debug/logger.dart';
 
 typedef TrackListWidgetBuilder = Widget Function(
     BuildContext context, List<TrackPublication>);
@@ -23,6 +24,8 @@ class TrackListBuilder extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ParticipantContext>(
       builder: (context, participantContext, child) {
+        Debug.log(
+            'TrackListBuilder build ${participantContext.tracks.length} tracks');
         return Selector<ParticipantContext, List<TrackPublication>>(
           selector: (context, tracks) => participantContext.tracks.where(
             (track) {

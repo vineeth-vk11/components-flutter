@@ -4,6 +4,7 @@ import 'package:livekit_client/livekit_client.dart';
 import 'package:provider/provider.dart';
 
 import '../../../livekit_components.dart';
+import '../debug/logger.dart';
 
 class ParticipantBuilder extends StatelessWidget {
   ParticipantBuilder({
@@ -18,7 +19,7 @@ class ParticipantBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(
+    Debug.log(
         'ParticipantBuilder build ${participantContext.participant.identity}');
     return ChangeNotifierProvider(
       create: (_) => participantContext,

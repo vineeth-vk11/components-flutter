@@ -11,7 +11,7 @@ class Prejoin extends StatelessWidget {
 
   String _name = '';
 
-  String _roomName = '';
+  String _roomName = 'livekit-room';
 
   void onTextNameChanged(String name) async {
     _name = name;
@@ -61,6 +61,7 @@ class Prejoin extends StatelessWidget {
                         child: TextInput(
                           onTextChanged: onTextRoomNameChanged,
                           hintText: 'Enter room name',
+                          text: _roomName,
                         ),
                       ),
                     ),

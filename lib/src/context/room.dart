@@ -2,14 +2,15 @@ import 'package:flutter/material.dart' hide ConnectionState;
 
 import 'package:flutter_background/flutter_background.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart' as rtc;
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:livekit_client/livekit_client.dart';
 
+import '../ui/debug/logger.dart';
+import 'chat.dart';
 import 'media_device.dart';
+import 'toast.dart';
 
-// ignore: depend_on_referenced_packages
-
-class RoomContext extends ChangeNotifier {
+class RoomContext extends ChangeNotifier
+    with MediaDeviceContextMixin, ChatContextMixin, FToastMixin {
   RoomContext({
     String? url,
     String? token,
@@ -20,35 +21,15 @@ class RoomContext extends ChangeNotifier {
         _token = token,
         _connectOptions = connectOptions {
     _room = Room(roomOptions: roomOptions);
-    mediaDevices = MediaDevicesContext(roomContext: this);
     _listener = _room.createListener();
     _listener
       ..on<RoomConnectedEvent>((event) {
-        fToast.showToast(
-            child: toast(room.connectionState),
-            gravity: ToastGravity.TOP,
-            toastDuration: const Duration(seconds: 2),
-            positionedToastBuilder: (context, child) {
-              return Positioned(
-                top: 32.0,
-                right: 16.0,
-                child: child,
-              );
-            });
+        chatContextSetup(_listener, _room.localParticipant!);
+        showConnectionStateToast(room.connectionState);
         notifyListeners();
       })
       ..on<RoomDisconnectedEvent>((event) {
-        fToast.showToast(
-            child: toast(room.connectionState),
-            gravity: ToastGravity.TOP,
-            toastDuration: const Duration(seconds: 2),
-            positionedToastBuilder: (context, child) {
-              return Positioned(
-                top: 32.0,
-                right: 16.0,
-                child: child,
-              );
-            });
+        showConnectionStateToast(room.connectionState);
         notifyListeners();
       })
       ..on<ParticipantConnectedEvent>((event) {
@@ -66,7 +47,7 @@ class RoomContext extends ChangeNotifier {
       ..on<TrackUnpublishedEvent>((event) {
         notifyListeners();
       });
-
+    loadDevices();
     if (connect && url != null && token != null) {
       this.connect(
         url: url,
@@ -87,10 +68,10 @@ class RoomContext extends ChangeNotifier {
     String? url,
     String? token,
   }) async {
-    if (mediaDevices.cameraOpened || mediaDevices.microphoneOpened) {
+    if (cameraOpened || microphoneOpened) {
       _fastConnectOptions = FastConnectOptions(
-        microphone: TrackOption(track: mediaDevices.localAudioTrack!),
-        camera: TrackOption(track: mediaDevices.localVideoTrack!),
+        microphone: TrackOption(track: localAudioTrack!),
+        camera: TrackOption(track: localVideoTrack!),
       );
     }
 
@@ -100,6 +81,7 @@ class RoomContext extends ChangeNotifier {
       fastConnectOptions: _fastConnectOptions,
       connectOptions: _connectOptions,
     );
+
     _url ??= url;
     _token ??= token;
     notifyListeners();
@@ -109,10 +91,6 @@ class RoomContext extends ChangeNotifier {
     await _room.disconnect();
     notifyListeners();
   }
-
-  late MediaDevicesContext mediaDevices;
-
-  final FToast fToast = FToast();
 
   final ConnectOptions? _connectOptions;
 
@@ -168,7 +146,7 @@ class RoomContext extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool _chatEnabled = true;
+  bool _chatEnabled = false;
 
   bool get isChatEnabled => _chatEnabled;
 
@@ -203,10 +181,10 @@ class RoomContext extends ChangeNotifier {
           builder: (context) => ScreenSelectDialog(),
         );
         if (source == null) {
-          print('cancelled screenshare');
+          Debug.log('cancelled screenshare');
           return;
         }
-        print('DesktopCapturerSource: ${source.id}');
+        Debug.log('DesktopCapturerSource: ${source.id}');
         var track = await LocalVideoTrack.createScreenShareTrack(
           ScreenShareCaptureOptions(
             sourceId: source.id,
@@ -215,7 +193,7 @@ class RoomContext extends ChangeNotifier {
         );
         await _room.localParticipant?.publishVideoTrack(track);
       } catch (e) {
-        print('could not publish video: $e');
+        Debug.log('could not publish video: $e');
       }
       return;
     }
@@ -250,7 +228,7 @@ class RoomContext extends ChangeNotifier {
             return await Future<void>.delayed(const Duration(seconds: 1),
                 () => requestBackgroundPermission(true));
           }
-          print('could not publish video: $e');
+          Debug.log('could not publish video: $e');
         }
       }
 
@@ -282,34 +260,4 @@ class RoomContext extends ChangeNotifier {
     await _room.localParticipant?.setScreenShareEnabled(false);
     notifyListeners();
   }
-
-  Widget toast(ConnectionState state) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(25.0),
-            color: {
-              ConnectionState.connected: Colors.green,
-              ConnectionState.disconnected: Colors.grey,
-              ConnectionState.connecting: Colors.yellowAccent,
-              ConnectionState.reconnecting: Colors.orangeAccent,
-            }[state]),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon({
-              ConnectionState.connected: Icons.check,
-              ConnectionState.disconnected: Icons.close,
-              ConnectionState.connecting: Icons.hourglass_top,
-              ConnectionState.reconnecting: Icons.refresh,
-            }[state]),
-            const SizedBox(width: 12.0),
-            Text('${{
-              ConnectionState.connected: 'Connected',
-              ConnectionState.disconnected: 'Disconnected',
-              ConnectionState.connecting: 'Connecting',
-              ConnectionState.reconnecting: 'Reconnecting',
-            }[state]}'),
-          ],
-        ),
-      );
 }
