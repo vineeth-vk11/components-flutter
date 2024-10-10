@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 
 //
@@ -9,6 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 //
 
 extension LKColors on Colors {
+  static const lkLightBlue = Color(0xFF8AB4FF);
   static const lkBlue = Color(0xFF5A8BFF);
   static const lkDarkBlue = Color(0xFF00153C);
 }

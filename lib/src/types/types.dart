@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 
 GlobalKey<NavigatorState> fToastNavigatorKey = GlobalKey<NavigatorState>();
 
-class WatchValue<T,S> {
+class WatchValue<T, S> {
   WatchValue(this.value);
 
   T value;

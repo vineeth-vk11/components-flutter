@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:intl/intl.dart';
 
 class CustomDateChip extends StatelessWidget {
@@ -24,7 +25,9 @@ class CustomDateChip extends StatelessWidget {
         ),
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(6)),
+            borderRadius: const BorderRadius.all(
+              Radius.circular(6),
+            ),
             color: color,
           ),
           child: Padding(

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:livekit_components/src/ui/buttons/leave_button.dart';
-import 'package:provider/provider.dart';
-import 'package:livekit_components/livekit_components.dart';
 
-import '../buttons/chat_button.dart';
-import '../buttons/screen_share_button.dart';
+import 'package:provider/provider.dart';
+
+import 'package:livekit_components/livekit_components.dart';
+import 'package:livekit_components/src/ui/buttons/leave_button.dart';
 
 class ControlBar extends StatelessWidget {
   const ControlBar(
@@ -27,20 +26,25 @@ class ControlBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: 80,
-      child: Consumer<RoomContext>(
-        builder: (context, roomCtx, child) {
-          return Wrap(
-            runSpacing: 6,
-            direction: Axis.vertical,
-            children: [
-              if (microphone) const MicrophoneSelectButton(),
-              if (camera) const CameraSelectButton(),
-              if (screenShare) const ScreenShareButton(),
-              if (chat) const ChatButton(),
-              if (leave) const LeaveButton(),
-            ],
-          );
-        },
+      child: Center(
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(0, 0, 0, 30),
+          child: Consumer<RoomContext>(
+            builder: (context, roomCtx, child) {
+              return Wrap(
+                runSpacing: 8,
+                direction: Axis.vertical,
+                children: [
+                  if (microphone) const MicrophoneSelectButton(),
+                  if (camera) const CameraSelectButton(),
+                  if (screenShare) const ScreenShareToggle(),
+                  if (chat) const ChatToggle(),
+                  if (leave) const LeaveButton(),
+                ],
+              );
+            },
+          ),
+        ),
       ),
     );
   }

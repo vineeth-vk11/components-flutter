@@ -1,10 +1,11 @@
-import 'package:flutter/material.dart';
 import 'dart:math' as math;
+
+import 'package:flutter/material.dart';
+
 import 'package:livekit_client/livekit_client.dart';
 import 'package:provider/provider.dart';
 
 import '../../context/participant.dart';
-
 import '../../types/theme.dart';
 import '../debug/logger.dart';
 import 'is_speaking_indicator.dart';

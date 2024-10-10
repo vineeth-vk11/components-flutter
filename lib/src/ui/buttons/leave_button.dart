@@ -13,29 +13,35 @@ class LeaveButton extends StatelessWidget {
       return Selector<RoomContext, bool>(
         selector: (context, connected) => roomCtx.connected,
         builder: (context, connected, child) {
-          return Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 10.0, vertical: 10.0),
-                decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(20.0)),
-                    color:
-                        connected ? Colors.red : Colors.grey.withOpacity(0.6)),
-                child: GestureDetector(
-                  onTap: () => connected ? roomCtx.disconnect() : null,
-                  child: const FocusableActionDetector(
-                    child: Row(
-                      children: [
-                        Icon(Icons.logout),
-                        SizedBox(width: 4.0),
-                        Text('Leave'),
-                      ],
-                    ),
+          return ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor: WidgetStateProperty.all(
+                  connected ? Colors.red : Colors.grey.withOpacity(0.6)),
+              foregroundColor: WidgetStateProperty.all(Colors.white),
+              overlayColor: WidgetStateProperty.all(
+                  connected ? Colors.redAccent : Colors.grey),
+              shape: WidgetStateProperty.all(
+                const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(20.0),
                   ),
                 ),
               ),
-            ],
+              padding: WidgetStateProperty.all(
+                  const EdgeInsets.fromLTRB(10, 20, 10, 20)),
+            ),
+            onPressed: () => connected ? roomCtx.disconnect() : null,
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.logout),
+                SizedBox(width: 2),
+                Text(
+                  'Leave',
+                  style: TextStyle(fontSize: 14),
+                ),
+              ],
+            ),
           );
         },
       );

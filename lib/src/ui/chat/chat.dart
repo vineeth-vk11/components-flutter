@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:livekit_components/livekit_components.dart';
-import 'package:livekit_components/src/context/chat.dart';
-
-import 'package:provider/provider.dart';
 
 import 'package:chat_bubbles/chat_bubbles.dart';
+import 'package:provider/provider.dart';
 
+import 'package:livekit_components/livekit_components.dart';
+import 'package:livekit_components/src/context/chat.dart';
 import 'data_chip.dart';
 
 class Chat extends StatelessWidget {

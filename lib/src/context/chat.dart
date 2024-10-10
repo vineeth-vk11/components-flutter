@@ -1,9 +1,8 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+
 import 'package:livekit_client/livekit_client.dart';
-import 'package:livekit_components/src/ui/debug/logger.dart';
 
 // topic: lk-chat-topic
 class ChatMessage {
@@ -49,19 +48,25 @@ class ChatMessage {
 
 mixin ChatContextMixin on ChangeNotifier {
   final List<ChatMessage> _messages = [];
-
   List<ChatMessage> get messages => _messages;
-
   LocalParticipant? _localParticipant;
+  EventsListener<RoomEvent>? _listener;
 
   void chatContextSetup(
-      EventsListener<RoomEvent> listener, LocalParticipant localParticipant) {
-    listener.on<DataReceivedEvent>((event) {
-      var str = utf8.decode(Uint8List.fromList(event.data));
-      Debug.log('DataReceivedEvent $str');
-      addMessageFromMap(str, event.participant);
-    });
+      EventsListener<RoomEvent>? listener, LocalParticipant? localParticipant) {
+    _listener = listener;
     _localParticipant = localParticipant;
+    if (listener != null) {
+      _listener!.on<DataReceivedEvent>((event) {
+        if (event.topic == 'lk-chat-topic') {
+          addMessageFromMap(
+              const Utf8Decoder().convert(event.data), event.participant);
+        }
+      });
+    } else {
+      _listener = null;
+      _messages.clear();
+    }
   }
 
   void sendMessage(String message) {

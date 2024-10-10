@@ -80,16 +80,8 @@ class Prejoin extends StatelessWidget {
                       height: 64,
                       child: Container(
                         padding: const EdgeInsets.all(8.0),
-                        child: TextButton(
+                        child: JoinButton(
                           onPressed: () => _handleJoinPressed(context),
-                          style: ButtonStyle(
-                            backgroundColor:
-                                WidgetStateProperty.all(LKColors.lkBlue),
-                          ),
-                          child: const Text(
-                            'Join Room',
-                            style: TextStyle(color: Colors.white, fontSize: 16),
-                          ),
                         ),
                       ),
                     ),
