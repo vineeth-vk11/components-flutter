@@ -26,7 +26,11 @@ mixin MediaDeviceContextMixin on ChangeNotifier {
   String? selectedAudioInputDeviceId;
 
   Future<void> loadDevices() async {
-    final devices = await Hardware.instance.enumerateDevices();
+    _loadDevices(await Hardware.instance.enumerateDevices());
+    Hardware.instance.onDeviceChange.stream.listen(_loadDevices);
+  }
+
+  _loadDevices(List<MediaDevice> devices) {
     _audioInputs = devices.where((d) => d.kind == 'audioinput').toList();
     _audioOutputs = devices.where((d) => d.kind == 'audiooutput').toList();
     _videoInputs = devices.where((d) => d.kind == 'videoinput').toList();
