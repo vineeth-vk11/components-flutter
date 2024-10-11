@@ -27,6 +27,8 @@ class ConnectionQualityIndicator extends StatelessWidget {
               ConnectionQuality.excellent: Colors.green,
               ConnectionQuality.good: Colors.orange,
               ConnectionQuality.poor: Colors.red,
+              ConnectionQuality.lost: Colors.grey,
+              ConnectionQuality.unknown: Colors.grey,
             }[connectionQuality],
             size: 20,
           ),

@@ -95,16 +95,17 @@ class MyHomePage extends StatelessWidget {
                         ),
                       ),
                       Selector<RoomContext, bool>(
-                          selector: (context, enabled) => roomCtx.isChatEnabled,
-                          builder: (context, enabled, child) => enabled
-                              ? const Expanded(
-                                  flex: 2,
-                                  child: SizedBox(
-                                    width: 400,
-                                    child: Chat(),
-                                  ),
-                                )
-                              : const SizedBox(width: 0, height: 0)),
+                        selector: (context, enabled) => roomCtx.isChatEnabled,
+                        builder: (context, enabled, child) => enabled
+                            ? const Expanded(
+                                flex: 2,
+                                child: SizedBox(
+                                  width: 400,
+                                  child: Chat(),
+                                ),
+                              )
+                            : const SizedBox(width: 0, height: 0),
+                      ),
                     ],
                   ),
           ),
