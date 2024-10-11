@@ -25,6 +25,8 @@ mixin MediaDeviceContextMixin on ChangeNotifier {
 
   String? selectedAudioInputDeviceId;
 
+  String? selectedAudioOutputDeviceId;
+
   Future<void> loadDevices() async {
     _loadDevices(await Hardware.instance.enumerateDevices());
     Hardware.instance.onDeviceChange.stream.listen(_loadDevices);
@@ -37,7 +39,7 @@ mixin MediaDeviceContextMixin on ChangeNotifier {
 
     selectedAudioInputDeviceId ??= _audioInputs?.first.deviceId;
     selectedVideoInputDeviceId ??= _videoInputs?.first.deviceId;
-
+    selectedAudioOutputDeviceId ??= _audioOutputs?.first.deviceId;
     notifyListeners();
   }
 
@@ -76,6 +78,14 @@ mixin MediaDeviceContextMixin on ChangeNotifier {
           deviceId: selectedAudioInputDeviceId,
         ),
       );
+    }
+    notifyListeners();
+  }
+
+  void selectAudioOutput(MediaDevice device) async {
+    selectedAudioOutputDeviceId = device.deviceId;
+    if (_room != null) {
+      await _room!.setAudioOutputDevice(device);
     }
     notifyListeners();
   }

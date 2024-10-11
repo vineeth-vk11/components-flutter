@@ -13,8 +13,9 @@ mixin FToastMixin {
       toastDuration: const Duration(seconds: 2),
       positionedToastBuilder: (context, child) {
         return Positioned(
-          top: 32.0,
-          right: 16.0,
+          top: 24.0,
+          right: 0.0,
+          left: 0.0,
           child: child,
         );
       },
@@ -28,25 +29,30 @@ mixin FToastMixin {
             color: {
               ConnectionState.connected: Colors.green,
               ConnectionState.disconnected: Colors.grey,
-              ConnectionState.connecting: Colors.yellowAccent,
+              ConnectionState.connecting: Colors.grey,
               ConnectionState.reconnecting: Colors.orangeAccent,
             }[state]),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon({
-              ConnectionState.connected: Icons.check,
-              ConnectionState.disconnected: Icons.close,
-              ConnectionState.connecting: Icons.hourglass_top,
-              ConnectionState.reconnecting: Icons.refresh,
-            }[state]),
+            Icon(
+                {
+                  ConnectionState.connected: Icons.check,
+                  ConnectionState.disconnected: Icons.close,
+                  ConnectionState.connecting: Icons.hourglass_top,
+                  ConnectionState.reconnecting: Icons.refresh,
+                }[state],
+                color: Colors.white),
             const SizedBox(width: 12.0),
-            Text('${{
-              ConnectionState.connected: 'Connected',
-              ConnectionState.disconnected: 'Disconnected',
-              ConnectionState.connecting: 'Connecting',
-              ConnectionState.reconnecting: 'Reconnecting',
-            }[state]}'),
+            Text(
+              '${{
+                ConnectionState.connected: 'Connected',
+                ConnectionState.disconnected: 'Disconnected',
+                ConnectionState.connecting: 'Connecting',
+                ConnectionState.reconnecting: 'Reconnecting',
+              }[state]}',
+              style: const TextStyle(color: Colors.white),
+            ),
           ],
         ),
       );

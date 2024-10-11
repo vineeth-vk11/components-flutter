@@ -15,7 +15,7 @@ void main() {
   Logger.root.level = Level.FINE;
   Logger.root.onRecord.listen((record) {
     if (kDebugMode) {
-      print('${format.format(record.time)}: ${record.message}');
+      //print('${format.format(record.time)}: ${record.message}');
     }
   });
 
@@ -68,7 +68,7 @@ class MyHomePage extends StatelessWidget {
       builder: (context) {
         return Consumer<RoomContext>(
           builder: (context, roomCtx, child) => Scaffold(
-            body: !roomCtx.connected
+            body: !roomCtx.connected && !roomCtx.connecting
                 ? Prejoin(
                     onJoinPressed: (name, roomName) =>
                         _onJoinPressed(roomCtx, name, roomName),
@@ -82,22 +82,11 @@ class MyHomePage extends StatelessWidget {
                           children: <Widget>[
                             Expanded(
                               child: ParticipantListBuilder(
-                                builder: (context, participants) => GridView(
-                                  gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 3,
-                                          childAspectRatio: 1.5),
-                                  children: participants
-                                      .map(
-                                        (p) => ParticipantBuilder(
-                                          participant: p,
-                                          builder: (context) => const Padding(
-                                            padding: EdgeInsets.all(2.0),
-                                            child: ParticipantWidget(),
-                                          ),
-                                        ),
-                                      )
-                                      .toList(),
+                                layoutBuilder: const CarouselLayoutBuilder(),
+                                builder: (context, TrackContext trackCtx) =>
+                                    const Padding(
+                                  padding: EdgeInsets.all(2.0),
+                                  child: ParticipantTile(),
                                 ),
                               ),
                             ),

@@ -3,16 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:provider/provider.dart';
 
-import '../../../livekit_components.dart';
+import '../../context/participant.dart';
+import '../../context/room.dart';
+import '../layout/layouts.dart';
 import '../debug/logger.dart';
+import 'track.dart';
 
-typedef ParticipantListWidgetBuilder = Widget Function(
-    BuildContext context, List<Participant>);
+typedef ParticipantBuilder = Widget Function(
+    BuildContext context, TrackContext);
 
 class ParticipantListBuilder extends StatelessWidget {
-  const ParticipantListBuilder({super.key, required this.builder});
-  final ParticipantListWidgetBuilder builder;
-
+  ParticipantListBuilder({
+    super.key,
+    required this.builder,
+    this.layoutBuilder = const GridLayoutBuilder(),
+  });
+  final ParticipantBuilder builder;
+  final ParticipantLayoutBuilder layoutBuilder;
+  final Map<TrackContext, Widget> children = {};
   @override
   Widget build(BuildContext context) {
     Debug.log('ParticipantListBuilder build');
@@ -22,7 +30,32 @@ class ParticipantListBuilder extends StatelessWidget {
             selector: (context, participants) => roomCtx.participants,
             builder: (context, participants, child) {
               Debug.log('participants ${participants.length}');
-              return builder(context, participants);
+              for (var paticipant in participants) {
+                var ctx = TrackContext(paticipant, isScreenShare: false);
+                children[ctx] = MultiProvider(
+                  providers: [
+                    ChangeNotifierProvider(
+                        create: (_) => ctx as ParticipantContext),
+                    ChangeNotifierProvider(create: (_) => ctx),
+                  ],
+                  child: builder(context, ctx),
+                );
+                for (var track in ctx.tracks) {
+                  if (track.source == TrackSource.screenShareVideo) {
+                    var ctx = TrackContext(paticipant, isScreenShare: true);
+                    children[ctx] = MultiProvider(
+                      providers: [
+                        ChangeNotifierProvider(
+                            create: (_) => ctx as ParticipantContext),
+                        ChangeNotifierProvider(create: (_) => ctx),
+                      ],
+                      child: builder(context, ctx),
+                    );
+                  }
+                }
+              }
+
+              return layoutBuilder.build(context, children);
             });
       },
     );

@@ -27,69 +27,67 @@ class Prejoin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<RoomContext>(
-      builder: (context, roomCtx, child) => Center(
-        child: SizedBox(
-          width: 480,
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
+    return Center(
+      child: SizedBox(
+        width: 480,
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    padding: const EdgeInsets.all(8.0),
+                    child: const CameraPreview(),
+                  ),
+                  SizedBox(
+                    width: 360,
+                    child: Container(
                       padding: const EdgeInsets.all(8.0),
-                      child: const CameraPreview(),
-                    ),
-                    SizedBox(
-                      width: 360,
-                      child: Container(
-                        padding: const EdgeInsets.all(8.0),
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            MicrophoneSelectButton(),
-                            CameraSelectButton(),
-                          ],
-                        ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          MicrophoneSelectButton(),
+                          CameraSelectButton(),
+                        ],
                       ),
                     ),
-                    SizedBox(
-                      width: 360,
-                      child: Container(
-                        padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-                        child: TextInput(
-                          onTextChanged: onTextRoomNameChanged,
-                          hintText: 'Enter room name',
-                          text: _roomName,
-                        ),
+                  ),
+                  SizedBox(
+                    width: 360,
+                    child: Container(
+                      padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                      child: TextInput(
+                        onTextChanged: onTextRoomNameChanged,
+                        hintText: 'Enter room name',
+                        text: _roomName,
                       ),
                     ),
-                    SizedBox(
-                      width: 360,
-                      child: Container(
-                        padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-                        child: TextInput(
-                          onTextChanged: onTextNameChanged,
-                          hintText: 'Enter your name',
-                        ),
+                  ),
+                  SizedBox(
+                    width: 360,
+                    child: Container(
+                      padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                      child: TextInput(
+                        onTextChanged: onTextNameChanged,
+                        hintText: 'Enter your name',
                       ),
                     ),
-                    SizedBox(
-                      width: 360,
-                      height: 64,
-                      child: Container(
-                        padding: const EdgeInsets.all(8.0),
-                        child: JoinButton(
-                          onPressed: () => _handleJoinPressed(context),
-                        ),
+                  ),
+                  SizedBox(
+                    width: 360,
+                    height: 64,
+                    child: Container(
+                      padding: const EdgeInsets.all(8.0),
+                      child: JoinButton(
+                        onPressed: () => _handleJoinPressed(context),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

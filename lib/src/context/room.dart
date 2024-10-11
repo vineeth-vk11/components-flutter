@@ -24,12 +24,15 @@ class RoomContext extends ChangeNotifier
         chatContextSetup(_listener, _room.localParticipant!);
         setRoom(_room);
         showConnectionStateToast(room.connectionState);
+        _connected = true;
+        _connecting = false;
         notifyListeners();
       })
       ..on<RoomDisconnectedEvent>((event) {
         showConnectionStateToast(room.connectionState);
         setRoom(null);
         chatContextSetup(null, null);
+        _connected = false;
         notifyListeners();
       })
       ..on<RoomEvent>((event) {
@@ -70,7 +73,13 @@ class RoomContext extends ChangeNotifier
   String? get roomMetadata => _room.metadata;
 
   ConnectionState get connectState => _room.connectionState;
-  bool get connected => _room.connectionState == ConnectionState.connected;
+
+  bool _connecting = false;
+  bool get connecting => _connecting;
+
+  bool _connected = false;
+  bool get connected => _connected;
+
   int get participantCount => participants.length;
 
   Future<void> connect({
@@ -85,16 +94,25 @@ class RoomContext extends ChangeNotifier
       await resetLocalTracks();
     }
 
-    await _room.connect(
-      _url ?? url!,
-      _token ?? token!,
-      fastConnectOptions: _fastConnectOptions,
-      connectOptions: _connectOptions,
-    );
-
-    _url ??= url;
-    _token ??= token;
+    showConnectionStateToast(ConnectionState.connecting);
+    _connecting = true;
     notifyListeners();
+
+    try {
+      await _room.connect(
+        url ?? _url!,
+        token ?? _token!,
+        fastConnectOptions: _fastConnectOptions,
+        connectOptions: _connectOptions,
+      );
+      _url ??= url;
+      _token ??= token;
+      _connecting = false;
+    } catch (e) {
+      showConnectionStateToast(ConnectionState.disconnected);
+      _connecting = false;
+      rethrow;
+    }
   }
 
   Future<void> disconnect() async {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:livekit_client/livekit_client.dart';
 
 import 'package:provider/provider.dart';
 
@@ -38,6 +39,7 @@ class ControlBar extends StatelessWidget {
                   if (microphone) const MicrophoneSelectButton(),
                   if (camera) const CameraSelectButton(),
                   if (screenShare) const ScreenShareToggle(),
+                  if (lkPlatformIsDesktop()) const AudioOutputSelectButton(),
                   if (chat) const ChatToggle(),
                   if (leave) const LeaveButton(),
                 ],
