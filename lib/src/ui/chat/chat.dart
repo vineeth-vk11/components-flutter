@@ -15,8 +15,14 @@ class Chat extends StatelessWidget {
     int lastTimestamp = 0;
     String lastPartcipantId = '';
     for (ChatMessage msg in messages) {
-      if (msg.timestamp - lastTimestamp > 3000 || lastPartcipantId != msg.id) {
-        msgWidgets.add(CustomDateChip(
+      if (DateTime.fromMillisecondsSinceEpoch(msg.timestamp)
+                  .difference(
+                      DateTime.fromMillisecondsSinceEpoch(lastTimestamp))
+                  .inMinutes >
+              1 ||
+          lastPartcipantId != msg.participant?.identity) {
+        msgWidgets.add(CustomDateNameChip(
+            name: msg.participant?.name ?? 'Unknown',
             date: DateTime.fromMillisecondsSinceEpoch(msg.timestamp)));
       }
       msgWidgets.add(BubbleNormal(
@@ -27,7 +33,7 @@ class Chat extends StatelessWidget {
       ));
 
       lastTimestamp = msg.timestamp;
-      lastPartcipantId = msg.id;
+      lastPartcipantId = msg.participant?.identity ?? '';
     }
     return msgWidgets;
   }
@@ -83,6 +89,11 @@ class Chat extends StatelessWidget {
                 messageBarColor: LKColors.lkDarkBlue,
                 replyWidgetColor: LKColors.lkDarkBlue,
                 onSend: (msg) => roomCtx.sendMessage(msg),
+                onTextChanged: (msg) {
+                  if (msg.isNotEmpty && msg.codeUnits.last == 10) {
+                    roomCtx.sendMessage(msg.substring(0, msg.length - 1));
+                  }
+                },
               ),
             )
           ],

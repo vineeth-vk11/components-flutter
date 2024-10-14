@@ -16,5 +16,5 @@ export 'src/ui/room/control_bar.dart';
 export 'src/ui/participant/participant_tile.dart';
 export 'src/ui/participant/participant_list_builder.dart';
 export 'src/ui/participant/participant_status_bar.dart';
-export 'src/ui/participant/track.dart';
+export 'src/context/track.dart';
 export 'src/ui/layout/layouts.dart';

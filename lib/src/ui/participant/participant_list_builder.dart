@@ -7,7 +7,7 @@ import '../../context/participant.dart';
 import '../../context/room.dart';
 import '../layout/layouts.dart';
 import '../debug/logger.dart';
-import 'track.dart';
+import '../../context/track.dart';
 
 typedef ParticipantBuilder = Widget Function(
     BuildContext context, TrackContext);

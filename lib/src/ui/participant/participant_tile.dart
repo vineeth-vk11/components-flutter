@@ -10,7 +10,7 @@ import '../../types/theme.dart';
 import '../debug/logger.dart';
 import 'is_speaking_indicator.dart';
 import 'participant_status_bar.dart';
-import 'track.dart';
+import '../../context/track.dart';
 
 class ParticipantTile extends StatelessWidget {
   const ParticipantTile({

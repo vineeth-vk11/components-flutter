@@ -75,6 +75,7 @@ mixin ChatContextMixin on ChangeNotifier {
       timestamp: DateTime.now().millisecondsSinceEpoch,
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       sender: true,
+      participant: _localParticipant,
     );
     addMessage(msg);
     _localParticipant?.publishData(const Utf8Encoder().convert(msg.toJson()),

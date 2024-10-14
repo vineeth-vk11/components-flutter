@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'dart:math' as math;
 
-import '../participant/track.dart';
+import '../../context/track.dart';
 
 abstract class ParticipantLayoutBuilder {
   Widget build(BuildContext context, Map<TrackContext, Widget> children);
