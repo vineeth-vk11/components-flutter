@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:livekit_client/livekit_client.dart';
 
 import 'package:provider/provider.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 
 import '../../context/room.dart';
 
@@ -9,6 +11,7 @@ class LeaveButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var deviceScreenType = getDeviceType(MediaQuery.of(context).size);
     return Consumer<RoomContext>(builder: (context, roomCtx, child) {
       return Selector<RoomContext, bool>(
         selector: (context, connected) => roomCtx.connected,
@@ -28,18 +31,23 @@ class LeaveButton extends StatelessWidget {
                 ),
               ),
               padding: WidgetStateProperty.all(
-                  const EdgeInsets.fromLTRB(10, 20, 10, 20)),
+                deviceScreenType == DeviceScreenType.desktop ||
+                        lkPlatformIsDesktop()
+                    ? const EdgeInsets.fromLTRB(10, 20, 10, 20)
+                    : const EdgeInsets.all(12),
+              ),
             ),
             onPressed: () => connected ? roomCtx.disconnect() : null,
-            child: const Row(
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.logout),
-                SizedBox(width: 2),
-                Text(
-                  'Leave',
-                  style: TextStyle(fontSize: 14),
-                ),
+                const Icon(Icons.logout),
+                const SizedBox(width: 2),
+                if (deviceScreenType != DeviceScreenType.mobile)
+                  const Text(
+                    'Leave',
+                    style: TextStyle(fontSize: 14),
+                  ),
               ],
             ),
           );

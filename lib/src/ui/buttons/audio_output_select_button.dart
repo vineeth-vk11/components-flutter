@@ -4,15 +4,17 @@ import 'package:livekit_client/livekit_client.dart';
 import 'package:provider/provider.dart';
 
 import 'package:livekit_components/livekit_components.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 
 class AudioOutputSelectButton extends StatelessWidget {
   const AudioOutputSelectButton({super.key});
 
   @override
   Widget build(BuildContext context) {
+    var deviceScreenType = getDeviceType(MediaQuery.of(context).size);
     return Consumer<RoomContext>(
       builder: (context, roomCtx, child) {
-        return Row(children: [
+        return Row(mainAxisSize: MainAxisSize.min, children: [
           ElevatedButton(
             style: ButtonStyle(
               backgroundColor:
@@ -23,18 +25,22 @@ class AudioOutputSelectButton extends StatelessWidget {
                       topLeft: Radius.circular(20.0),
                       bottomLeft: Radius.circular(20.0)))),
               padding: WidgetStateProperty.all(
-                  const EdgeInsets.fromLTRB(10, 20, 10, 20)),
+                  deviceScreenType == DeviceScreenType.desktop ||
+                          lkPlatformIsDesktop()
+                      ? const EdgeInsets.fromLTRB(10, 20, 10, 20)
+                      : const EdgeInsets.all(12)),
             ),
             onPressed: () {},
-            child: const Row(
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.volume_up),
-                SizedBox(width: 2),
-                Text(
-                  'Audio Output',
-                  style: TextStyle(fontSize: 14),
-                ),
+                const Icon(Icons.volume_up),
+                const SizedBox(width: 2),
+                if (deviceScreenType != DeviceScreenType.mobile)
+                  const Text(
+                    'Audio Output',
+                    style: TextStyle(fontSize: 14),
+                  ),
               ],
             ),
           ),

@@ -24,8 +24,6 @@ class JoinButton extends StatelessWidget {
             backgroundColor: WidgetStateProperty.all(
                 connected ? Colors.grey : LKColors.lkBlue),
             foregroundColor: WidgetStateProperty.all(Colors.white),
-            //overlayColor: WidgetStateProperty.all(
-            //    connected ? Colors.grey : LKColors.lkLightBlue),
             shape: WidgetStateProperty.all(
               const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(
@@ -33,8 +31,7 @@ class JoinButton extends StatelessWidget {
                 ),
               ),
             ),
-            padding: WidgetStateProperty.all(
-                const EdgeInsets.fromLTRB(10, 20, 10, 20)),
+            padding: WidgetStateProperty.all(const EdgeInsets.all(12)),
           ),
           child: const Text(
             'Join Room',

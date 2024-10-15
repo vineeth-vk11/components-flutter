@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:livekit_client/livekit_client.dart';
 import 'package:provider/provider.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 
 import '../../context/room.dart';
 import '../../types/theme.dart';
@@ -11,9 +12,11 @@ class CameraSelectButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var deviceScreenType = getDeviceType(MediaQuery.of(context).size);
     return Consumer<RoomContext>(
       builder: (context, roomCtx, child) {
         return Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             ElevatedButton(
               style: ButtonStyle(
@@ -28,7 +31,11 @@ class CameraSelectButton extends StatelessWidget {
                         topLeft: Radius.circular(20.0),
                         bottomLeft: Radius.circular(20.0)))),
                 padding: WidgetStateProperty.all(
-                    const EdgeInsets.fromLTRB(10, 20, 10, 20)),
+                  deviceScreenType == DeviceScreenType.desktop ||
+                          lkPlatformIsDesktop()
+                      ? const EdgeInsets.fromLTRB(10, 20, 10, 20)
+                      : const EdgeInsets.all(12),
+                ),
               ),
               onPressed: () => roomCtx.cameraOpened
                   ? roomCtx.disableCamera()
@@ -39,7 +46,8 @@ class CameraSelectButton extends StatelessWidget {
                   Icon(roomCtx.cameraOpened
                       ? Icons.videocam
                       : Icons.videocam_off),
-                  const Text('Camera'),
+                  if (deviceScreenType != DeviceScreenType.mobile)
+                    const Text('Camera'),
                 ],
               ),
             ),

@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:livekit_client/livekit_client.dart';
 
 import 'package:provider/provider.dart';
 
 import 'package:livekit_components/livekit_components.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 
 class ChatToggle extends StatelessWidget {
   const ChatToggle({super.key});
 
   @override
   Widget build(BuildContext context) {
+    var deviceScreenType = getDeviceType(MediaQuery.of(context).size);
     return Consumer<RoomContext>(builder: (context, roomCtx, child) {
       return Selector<RoomContext, bool>(
         selector: (context, isChatEnabled) => roomCtx.isChatEnabled,
@@ -29,19 +32,24 @@ class ChatToggle extends StatelessWidget {
                 ),
               ),
               padding: WidgetStateProperty.all(
-                  const EdgeInsets.fromLTRB(12, 20, 10, 20)),
+                deviceScreenType == DeviceScreenType.desktop ||
+                        lkPlatformIsDesktop()
+                    ? const EdgeInsets.fromLTRB(10, 20, 10, 20)
+                    : const EdgeInsets.all(12),
+              ),
             ),
             onPressed: () =>
                 isChatEnabled ? roomCtx.disableChat() : roomCtx.enableChat(),
-            child: const Row(
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.chat_outlined),
-                SizedBox(width: 2),
-                Text(
-                  'Chat',
-                  style: TextStyle(fontSize: 14),
-                ),
+                const Icon(Icons.chat_outlined),
+                const SizedBox(width: 2),
+                if (deviceScreenType != DeviceScreenType.mobile)
+                  const Text(
+                    'Chat',
+                    style: TextStyle(fontSize: 14),
+                  ),
               ],
             ),
           );

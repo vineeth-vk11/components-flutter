@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:livekit_client/livekit_client.dart';
 import 'package:provider/provider.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 
 import 'package:livekit_components/livekit_components.dart';
 
@@ -10,9 +11,10 @@ class MicrophoneSelectButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var deviceScreenType = getDeviceType(MediaQuery.of(context).size);
     return Consumer<RoomContext>(
       builder: (context, roomCtx, child) {
-        return Row(children: [
+        return Row(mainAxisSize: MainAxisSize.min, children: [
           ElevatedButton(
             style: ButtonStyle(
               backgroundColor: WidgetStateProperty.all(roomCtx.microphoneOpened
@@ -27,7 +29,11 @@ class MicrophoneSelectButton extends StatelessWidget {
                       topLeft: Radius.circular(20.0),
                       bottomLeft: Radius.circular(20.0)))),
               padding: WidgetStateProperty.all(
-                  const EdgeInsets.fromLTRB(10, 20, 10, 20)),
+                deviceScreenType == DeviceScreenType.desktop ||
+                        lkPlatformIsDesktop()
+                    ? const EdgeInsets.fromLTRB(10, 20, 10, 20)
+                    : const EdgeInsets.all(12),
+              ),
             ),
             onPressed: () => roomCtx.microphoneOpened
                 ? roomCtx.disableMicrophone()
@@ -37,10 +43,11 @@ class MicrophoneSelectButton extends StatelessWidget {
               children: [
                 Icon(roomCtx.microphoneOpened ? Icons.mic : Icons.mic_off),
                 const SizedBox(width: 2),
-                const Text(
-                  'Microphone',
-                  style: TextStyle(fontSize: 14),
-                ),
+                if (deviceScreenType != DeviceScreenType.mobile)
+                  const Text(
+                    'Microphone',
+                    style: TextStyle(fontSize: 14),
+                  ),
               ],
             ),
           ),
