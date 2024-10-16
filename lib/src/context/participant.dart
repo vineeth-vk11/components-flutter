@@ -54,8 +54,8 @@ class ParticipantContext extends ChangeNotifier {
 
   @override
   void dispose() {
-    _listener.dispose();
     super.dispose();
+    _listener.dispose();
   }
 
   bool _isSpeaking = false;

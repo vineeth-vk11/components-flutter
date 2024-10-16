@@ -1,11 +1,15 @@
+import 'package:flutter/material.dart';
 import 'package:livekit_client/livekit_client.dart';
-import 'package:livekit_components/src/context/participant.dart';
 
-class TrackContext extends ParticipantContext {
+class TrackContext extends ValueNotifier {
   TrackContext(
-    super._participant, {
+    this._participant, {
     required this.isScreenShare,
-  });
+  }) : super(null);
+  final Participant _participant;
+  Participant get participant => _participant;
+  List<TrackPublication> get tracks =>
+      _participant.trackPublications.values.toList();
   final bool isScreenShare;
   VideoTrack? get videoTrack => tracks
       .where((t) => t.source == TrackSource.camera && !t.muted)

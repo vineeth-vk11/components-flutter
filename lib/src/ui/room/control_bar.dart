@@ -34,8 +34,8 @@ class ControlBar extends StatelessWidget {
         builder: (context, roomCtx, child) {
           return Wrap(
             alignment: WrapAlignment.center,
-            spacing: 5,
-            runSpacing: 5,
+            spacing: 6,
+            runSpacing: 6,
             children: [
               if (microphone) const MicrophoneSelectButton(),
               if (lkPlatformIsDesktop()) const AudioOutputSelectButton(),

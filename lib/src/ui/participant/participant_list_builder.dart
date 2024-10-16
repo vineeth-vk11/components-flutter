@@ -35,7 +35,7 @@ class ParticipantListBuilder extends StatelessWidget {
                 children[ctx] = MultiProvider(
                   providers: [
                     ChangeNotifierProvider(
-                        create: (_) => ctx as ParticipantContext),
+                        create: (_) => ParticipantContext(paticipant)),
                     ChangeNotifierProvider(create: (_) => ctx),
                   ],
                   child: builder(context, ctx),
@@ -46,7 +46,7 @@ class ParticipantListBuilder extends StatelessWidget {
                     children[ctx] = MultiProvider(
                       providers: [
                         ChangeNotifierProvider(
-                            create: (_) => ctx as ParticipantContext),
+                            create: (_) => ParticipantContext(paticipant)),
                         ChangeNotifierProvider(create: (_) => ctx),
                       ],
                       child: builder(context, ctx),
