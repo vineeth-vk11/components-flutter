@@ -8,7 +8,9 @@ import '../../context/room.dart';
 import '../../types/theme.dart';
 
 class CameraSelectButton extends StatelessWidget {
-  const CameraSelectButton({super.key});
+  const CameraSelectButton({super.key, this.showLabel = false});
+
+  final bool showLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +48,7 @@ class CameraSelectButton extends StatelessWidget {
                   Icon(roomCtx.cameraOpened
                       ? Icons.videocam
                       : Icons.videocam_off),
-                  if (deviceScreenType != DeviceScreenType.mobile)
+                  if (deviceScreenType != DeviceScreenType.mobile || showLabel)
                     const Text('Camera'),
                 ],
               ),

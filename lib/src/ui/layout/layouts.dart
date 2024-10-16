@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 import 'dart:math' as math;
 
 import '../../context/track.dart';
@@ -12,9 +13,10 @@ class GridLayoutBuilder implements ParticipantLayoutBuilder {
 
   @override
   Widget build(BuildContext context, Map<TrackContext, Widget> children) {
-    return GridView(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3, childAspectRatio: 1.5),
+    var deviceScreenType = getDeviceType(MediaQuery.of(context).size);
+    return GridView.count(
+      crossAxisCount: deviceScreenType != DeviceScreenType.mobile ? 2 : 4,
+      childAspectRatio: 1.5,
       children: children.values.toList(),
     );
   }

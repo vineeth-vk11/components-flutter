@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:logging/logging.dart';
 import 'package:intl/intl.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 
 import 'src/prejoin.dart';
 import 'src/utils.dart';
@@ -66,6 +67,7 @@ class MyHomePage extends StatelessWidget {
     return LivekitRoom(
       roomContext: RoomContext(),
       builder: (context) {
+        var deviceScreenType = getDeviceType(MediaQuery.of(context).size);
         return Consumer<RoomContext>(
           builder: (context, roomCtx, child) => Scaffold(
             body: !roomCtx.connected && !roomCtx.connecting
@@ -75,37 +77,44 @@ class MyHomePage extends StatelessWidget {
                   )
                 : Row(
                     children: [
-                      Expanded(
-                        flex: 5,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Expanded(
-                              child: ParticipantListBuilder(
-                                layoutBuilder: const GridLayoutBuilder(),
-                                builder: (context, TrackContext trackCtx) =>
-                                    const Padding(
-                                  padding: EdgeInsets.all(2.0),
-                                  child: ParticipantTile(),
-                                ),
+                      (deviceScreenType == DeviceScreenType.mobile &&
+                              roomCtx.isChatEnabled)
+                          ? const Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.only(top: 50),
+                                child: Chat(),
+                              ),
+                            )
+                          : Expanded(
+                              flex: 5,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Expanded(
+                                    child: ParticipantListBuilder(
+                                      layoutBuilder: const GridLayoutBuilder(),
+                                      builder:
+                                          (context, TrackContext trackCtx) =>
+                                              const Padding(
+                                        padding: EdgeInsets.all(2.0),
+                                        child: ParticipantTile(),
+                                      ),
+                                    ),
+                                  ),
+                                  const ControlBar(),
+                                ],
                               ),
                             ),
-                            const ControlBar(),
-                          ],
-                        ),
-                      ),
-                      Selector<RoomContext, bool>(
-                        selector: (context, enabled) => roomCtx.isChatEnabled,
-                        builder: (context, enabled, child) => enabled
-                            ? const Expanded(
-                                flex: 2,
-                                child: SizedBox(
-                                  width: 400,
-                                  child: Chat(),
-                                ),
-                              )
-                            : const SizedBox(width: 0, height: 0),
-                      ),
+                      (deviceScreenType != DeviceScreenType.mobile &&
+                              roomCtx.isChatEnabled)
+                          ? const Expanded(
+                              flex: 2,
+                              child: SizedBox(
+                                width: 400,
+                                child: Chat(),
+                              ),
+                            )
+                          : const SizedBox(width: 0, height: 0),
                     ],
                   ),
           ),

@@ -13,14 +13,14 @@ typedef ParticipantBuilder = Widget Function(
     BuildContext context, TrackContext);
 
 class ParticipantListBuilder extends StatelessWidget {
-  ParticipantListBuilder({
+  const ParticipantListBuilder({
     super.key,
     required this.builder,
     this.layoutBuilder = const GridLayoutBuilder(),
   });
   final ParticipantBuilder builder;
   final ParticipantLayoutBuilder layoutBuilder;
-  final Map<TrackContext, Widget> children = {};
+
   @override
   Widget build(BuildContext context) {
     Debug.log('ParticipantListBuilder build');
@@ -29,6 +29,7 @@ class ParticipantListBuilder extends StatelessWidget {
         return Selector<RoomContext, List<Participant>>(
             selector: (context, participants) => roomCtx.participants,
             builder: (context, participants, child) {
+              final Map<TrackContext, Widget> children = {};
               Debug.log('participants ${participants.length}');
               for (var paticipant in participants) {
                 var ctx = TrackContext(paticipant, isScreenShare: false);

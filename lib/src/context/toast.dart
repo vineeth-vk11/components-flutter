@@ -2,6 +2,7 @@ import 'package:flutter/material.dart' hide ConnectionState;
 
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:livekit_client/livekit_client.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 
 mixin FToastMixin {
   final FToast fToast = FToast();
@@ -12,8 +13,9 @@ mixin FToastMixin {
       gravity: ToastGravity.TOP,
       toastDuration: const Duration(seconds: 2),
       positionedToastBuilder: (context, child) {
+        var deviceScreenType = getDeviceType(MediaQuery.of(context).size);
         return Positioned(
-          top: 24.0,
+          top: (deviceScreenType == DeviceScreenType.mobile) ? 60 : 24.0,
           right: 0.0,
           left: 0.0,
           child: child,

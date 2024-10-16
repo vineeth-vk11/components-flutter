@@ -7,7 +7,9 @@ import 'package:responsive_builder/responsive_builder.dart';
 import 'package:livekit_components/livekit_components.dart';
 
 class MicrophoneSelectButton extends StatelessWidget {
-  const MicrophoneSelectButton({super.key});
+  const MicrophoneSelectButton({super.key, this.showLabel = false});
+
+  final bool showLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +45,7 @@ class MicrophoneSelectButton extends StatelessWidget {
               children: [
                 Icon(roomCtx.microphoneOpened ? Icons.mic : Icons.mic_off),
                 const SizedBox(width: 2),
-                if (deviceScreenType != DeviceScreenType.mobile)
+                if (deviceScreenType != DeviceScreenType.mobile || showLabel)
                   const Text(
                     'Microphone',
                     style: TextStyle(fontSize: 14),

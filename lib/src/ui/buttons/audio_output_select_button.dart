@@ -7,7 +7,9 @@ import 'package:livekit_components/livekit_components.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
 class AudioOutputSelectButton extends StatelessWidget {
-  const AudioOutputSelectButton({super.key});
+  const AudioOutputSelectButton({super.key, this.showLabel = false});
+
+  final bool showLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +38,7 @@ class AudioOutputSelectButton extends StatelessWidget {
               children: [
                 const Icon(Icons.volume_up),
                 const SizedBox(width: 2),
-                if (deviceScreenType != DeviceScreenType.mobile)
+                if (deviceScreenType != DeviceScreenType.mobile || showLabel)
                   const Text(
                     'Audio Output',
                     style: TextStyle(fontSize: 14),
