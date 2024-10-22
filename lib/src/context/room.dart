@@ -4,11 +4,9 @@ import 'package:livekit_client/livekit_client.dart';
 
 import '../ui/debug/logger.dart';
 import 'chat.dart';
-import 'media_device.dart';
 import 'toast.dart';
 
-class RoomContext extends ChangeNotifier
-    with MediaDeviceContextMixin, ChatContextMixin, FToastMixin {
+class RoomContext extends ChangeNotifier with ChatContextMixin, FToastMixin {
   RoomContext({
     String? url,
     String? token,
@@ -22,48 +20,73 @@ class RoomContext extends ChangeNotifier
     _listener = _room.createListener();
     _listener
       ..on<RoomConnectedEvent>((event) {
+        Debug.event('RoomContext: RoomConnectedEvent');
         chatContextSetup(_listener, _room.localParticipant!);
-        setRoom(_room);
         showConnectionStateToast(room.connectionState);
         _connected = true;
         _connecting = false;
         _roomMetadata = event.room.metadata;
         _activeRecording = event.room.isRecording;
         _roomName = event.room.name;
+        sortParticipants();
         notifyListeners();
       })
       ..on<RoomDisconnectedEvent>((event) {
+        Debug.event('RoomContext: RoomDisconnectedEvent');
         showConnectionStateToast(room.connectionState);
-        setRoom(null);
         chatContextSetup(null, null);
         _connected = false;
+        _participants.clear();
         notifyListeners();
       })
       ..on<RoomMetadataChangedEvent>((event) {
+        Debug.event(
+            'RoomContext: RoomMetadataChangedEvent metadata = ${event.metadata}');
         _roomMetadata = event.metadata;
         notifyListeners();
       })
       ..on<RoomRecordingStatusChanged>((event) {
+        Debug.event(
+            'RoomContext: RoomRecordingStatusChanged activeRecording = ${event.activeRecording}');
         _activeRecording = event.activeRecording;
         notifyListeners();
       })
       ..on<ParticipantNameUpdatedEvent>((event) {
+        Debug.event(
+            'RoomContext: ParticipantNameUpdatedEvent name = ${event.name}');
         _roomName = event.name;
         notifyListeners();
       })
-      ..on<RoomEvent>((event) {
-        [
-          ParticipantConnectedEvent,
-          ParticipantDisconnectedEvent,
-          LocalTrackPublishedEvent,
-          TrackPublishedEvent,
-          TrackUnpublishedEvent
-        ].contains(event.runtimeType)
-            ? notifyListeners()
-            : null;
+      ..on<ParticipantConnectedEvent>((event) {
+        Debug.event(
+            'RoomContext: ParticipantConnectedEvent participant = ${event.participant.identity}');
+        sortParticipants();
+      })
+      ..on<ParticipantDisconnectedEvent>((event) {
+        Debug.event(
+            'RoomContext: ParticipantDisconnectedEvent participant = ${event.participant.identity}');
+        _participants
+            .removeWhere((p) => p.identity == event.participant.identity);
+        notifyListeners();
+      })
+      ..on<TrackPublishedEvent>((event) {
+        Debug.event('ParticipantContext: TrackPublishedEvent');
+        sortParticipants();
+      })
+      ..on<TrackUnpublishedEvent>((event) {
+        Debug.event('ParticipantContext: TrackUnpublishedEvent');
+        sortParticipants();
+      })
+      ..on<LocalTrackPublishedEvent>((event) {
+        Debug.event(
+            'RoomContext: LocalTrackPublishedEvent track = ${event.publication.sid}');
+        sortParticipants();
+      })
+      ..on<LocalTrackUnpublishedEvent>((event) {
+        Debug.event(
+            'RoomContext: LocalTrackUnpublishedEvent track = ${event.publication.sid}');
+        sortParticipants();
       });
-
-    loadDevices();
 
     if (connect && url != null && token != null) {
       this.connect(
@@ -102,7 +125,25 @@ class RoomContext extends ChangeNotifier
   bool _connected = false;
   bool get connected => _connected;
 
-  int get participantCount => participants.length;
+  int get participantCount => _participants.length;
+
+  final List<Participant> _participants = [];
+  List<Participant> get participants => _participants;
+
+  void sortParticipants() {
+    _participants.clear();
+
+    if (!connected) {
+      return;
+    }
+
+    if (_room.localParticipant != null) {
+      _participants.add(_room.localParticipant!);
+    }
+
+    _participants.addAll(_room.remoteParticipants.values);
+    notifyListeners();
+  }
 
   Future<void> connect({
     String? url,
@@ -142,20 +183,6 @@ class RoomContext extends ChangeNotifier
     notifyListeners();
   }
 
-  List<Participant> get participants {
-    if (!connected) {
-      return [];
-    }
-
-    if (_room.localParticipant == null) {
-      return _room.remoteParticipants.values.toList();
-    }
-    return <Participant>[
-      _room.localParticipant!,
-      ..._room.remoteParticipants.values,
-    ];
-  }
-
   void setFocusedTrack(String? sid) {
     _focusedTrackSid = sid;
     Debug.log('Focused track: $sid');
@@ -164,6 +191,39 @@ class RoomContext extends ChangeNotifier
 
   String? _focusedTrackSid;
   String? get focusedTrackSid => _focusedTrackSid;
+
+  LocalVideoTrack? _localVideoTrack;
+
+  LocalVideoTrack? get localVideoTrack => _localVideoTrack;
+
+  set localVideoTrack(LocalVideoTrack? track) {
+    _localVideoTrack = track;
+    notifyListeners();
+  }
+
+  bool get cameraOpened => isCameraEnabled ?? _localVideoTrack != null;
+
+  bool? get isCameraEnabled => _room.localParticipant?.isCameraEnabled();
+
+  LocalAudioTrack? _localAudioTrack;
+
+  LocalAudioTrack? get localAudioTrack => _localAudioTrack;
+
+  set localAudioTrack(LocalAudioTrack? track) {
+    _localAudioTrack = track;
+    notifyListeners();
+  }
+
+  bool get microphoneOpened => isMicrophoneEnabled ?? _localAudioTrack != null;
+
+  bool? get isMicrophoneEnabled =>
+      _room.localParticipant?.isMicrophoneEnabled();
+
+  Future<void> resetLocalTracks() async {
+    _localAudioTrack = null;
+    _localVideoTrack = null;
+    notifyListeners();
+  }
 
   @override
   void dispose() {

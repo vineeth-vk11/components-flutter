@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:livekit_components/livekit_components.dart';
 
+import 'buttons/camera_select_button.dart';
+import 'buttons/join_button.dart';
+import 'buttons/microphone_select_button.dart';
+import 'room/camera_preview.dart';
 import 'text_input.dart';
 
 class Prejoin extends StatelessWidget {

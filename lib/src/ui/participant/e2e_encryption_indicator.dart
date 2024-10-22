@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../context/participant.dart';
+import '../debug/logger.dart';
 
 class E2EEncryptionIndicator extends StatelessWidget {
   const E2EEncryptionIndicator({
@@ -12,8 +13,10 @@ class E2EEncryptionIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<ParticipantContext>(
-      builder: (context, participantContext, child) =>
-          Selector<ParticipantContext, bool>(
+        builder: (context, participantContext, child) {
+      Debug.log(
+          '====>        E2EEncryptionIndicator for ${participantContext.name}');
+      return Selector<ParticipantContext, bool>(
         selector: (context, isEncrypted) => participantContext.isEncrypted,
         builder: (context, isEncrypted, child) => Padding(
           padding: const EdgeInsets.only(left: 5),
@@ -23,7 +26,7 @@ class E2EEncryptionIndicator extends StatelessWidget {
             size: 20,
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 }

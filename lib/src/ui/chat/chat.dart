@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:chat_bubbles/chat_bubbles.dart';
 import 'package:provider/provider.dart';
 
-import 'package:livekit_components/livekit_components.dart';
 import 'package:livekit_components/src/context/chat.dart';
+import '../../context/room.dart';
+import '../../types/theme.dart';
 import 'data_chip.dart';
 
 class Chat extends StatelessWidget {

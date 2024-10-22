@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
-import 'package:livekit_components/livekit_components.dart';
+import '../../context/room.dart';
+import '../../types/theme.dart';
 
 class JoinButton extends StatelessWidget {
   JoinButton({super.key, this.onPressed});

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:livekit_client/livekit_client.dart';
-
 import 'package:provider/provider.dart';
-
-import 'package:livekit_components/livekit_components.dart';
 import 'package:responsive_builder/responsive_builder.dart';
+
+import '../../context/room.dart';
+import '../../types/theme.dart';
 
 class ChatToggle extends StatelessWidget {
   const ChatToggle({super.key});

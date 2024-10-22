@@ -5,55 +5,97 @@ import 'package:livekit_client/livekit_client.dart';
 import '../ui/debug/logger.dart';
 
 class ParticipantContext extends ChangeNotifier {
+  static int createCount = 0;
   ParticipantContext(this._participant)
       : _listener = _participant.createListener() {
     _listener
       ..on<SpeakingChangedEvent>((event) {
-        _isSpeaking = event.speaking;
-        notifyListeners();
+        if (event.participant.identity == identity &&
+            isSpeaking != event.speaking) {
+          Debug.event(
+              'ParticipantContext: SpeakingChangedEvent identity = ${_participant.identity}, speaking = ${event.speaking}');
+          _isSpeaking = event.speaking;
+          notifyListeners();
+        }
       })
       ..on<ParticipantNameUpdatedEvent>((event) {
-        _name = event.name;
+        Debug.event(
+            'ParticipantContext: ParticipantNameUpdatedEvent name = ${event.name}');
         notifyListeners();
       })
       ..on<ParticipantMetadataUpdatedEvent>((event) {
-        _metadata = event.metadata;
-        notifyListeners();
-      })
-      ..on<TrackMutedEvent>((event) {
-        notifyListeners();
-      })
-      ..on<TrackUnmutedEvent>((event) {
-        notifyListeners();
+        if (event.metadata != _metadata) {
+          Debug.event(
+              'ParticipantContext: ParticipantMetadataUpdatedEvent metadata = ${event.metadata}');
+
+          _metadata = event.metadata;
+          notifyListeners();
+        }
       })
       ..on<ParticipantConnectionQualityUpdatedEvent>((event) {
-        _connectionQuality = event.connectionQuality;
-        notifyListeners();
+        if (event.connectionQuality != _connectionQuality) {
+          Debug.event(
+              'ParticipantContext: ParticipantConnectionQualityUpdatedEvent connectionQuality = ${event.connectionQuality}');
+
+          _connectionQuality = event.connectionQuality;
+          notifyListeners();
+        }
       })
       ..on<ParticipantPermissionsUpdatedEvent>((event) {
-        _permissions = event.permissions;
-        notifyListeners();
+        if (_permissions?.canPublish != event.permissions.canPublish ||
+            _permissions?.canSubscribe != event.permissions.canSubscribe ||
+            _permissions?.canPublishData != event.permissions.canPublishData ||
+            _permissions?.canUpdateMetadata !=
+                event.permissions.canUpdateMetadata ||
+            _permissions?.canPublishSources !=
+                event.permissions.canPublishSources) {
+          Debug.event(
+              'ParticipantContext: ParticipantPermissionsUpdatedEvent permissions canPublish = ${event.permissions.canPublish}, canSubscribe = ${event.permissions.canSubscribe}, canPublishData = ${event.permissions.canPublishData}, canUpdateMetadata = ${event.permissions.canUpdateMetadata}, canPublishSources = ${event.permissions.canPublishSources}');
+          _permissions = event.permissions;
+          notifyListeners();
+        }
       })
       ..on<TranscriptionEvent>((e) {
+        Debug.event('ParticipantContext: TranscriptionEvent');
         for (var seg in e.segments) {
           Debug.log('Transcription: ${seg.text} ${seg.isFinal}');
         }
       })
       ..on<ParticipantAttributesChanged>((event) {
+        Debug.event(
+            'ParticipantContext: ParticipantAttributesChanged attributes = ${event.attributes}');
         _attributes = event.attributes;
         notifyListeners();
+      })
+      ..on<TrackMutedEvent>((event) {
+        if (event.participant.identity == identity &&
+            event.publication.kind == TrackType.AUDIO) {
+          Debug.event('TrackContext: TrackMutedEvent for ${_participant.sid}');
+          notifyListeners();
+        }
+      })
+      ..on<TrackUnmutedEvent>((event) {
+        if (event.participant.identity == identity &&
+            event.publication.kind == TrackType.AUDIO) {
+          Debug.event(
+              'TrackContext: TrackUnmutedEvent for ${_participant.sid}');
+          notifyListeners();
+        }
       });
 
-    _name = _participant.name;
     _metadata = _participant.metadata;
     _connectionQuality = _participant.connectionQuality;
     _permissions = _participant.permissions;
+    createCount++;
+    Debug.log('Participant::new count $createCount');
   }
 
   @override
   void dispose() {
     super.dispose();
     _listener.dispose();
+    createCount--;
+    Debug.log('Participant::dispose count $createCount');
   }
 
   bool get isLocal => _participant is LocalParticipant;
@@ -78,8 +120,8 @@ class ParticipantContext extends ChangeNotifier {
   String? _metadata;
   String? get metadata => _metadata;
 
-  String _name = '';
-  String get name => _name;
+  String get name =>
+      _participant.name == '' ? _participant.identity : _participant.name;
 
   bool get isMuted => _participant.isMuted;
 

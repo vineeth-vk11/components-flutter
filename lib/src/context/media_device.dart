@@ -1,15 +1,22 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-
 import 'package:flutter_background/flutter_background.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart' as rtc;
 import 'package:livekit_client/livekit_client.dart';
 
 import '../ui/debug/logger.dart';
+import 'room.dart';
 
-mixin MediaDeviceContextMixin on ChangeNotifier {
-  Room? _room;
+class MediaDeviceContext extends ChangeNotifier {
+  MediaDeviceContext({
+    required RoomContext roomCtx,
+  })  : _roomCtx = roomCtx,
+        _room = roomCtx.room {
+    loadDevices();
+  }
+  final RoomContext _roomCtx;
+  final Room? _room;
 
   CameraPosition position = CameraPosition.front;
 
@@ -27,6 +34,14 @@ mixin MediaDeviceContextMixin on ChangeNotifier {
 
   String? selectedAudioOutputDeviceId;
 
+  bool get cameraOpened => _roomCtx.cameraOpened;
+
+  bool get microphoneOpened => _roomCtx.microphoneOpened;
+
+  LocalVideoTrack? get localVideoTrack => _roomCtx.localVideoTrack;
+
+  LocalAudioTrack? get localAudioTrack => _roomCtx.localAudioTrack;
+
   Future<void> loadDevices() async {
     _loadDevices(await Hardware.instance.enumerateDevices());
     Hardware.instance.onDeviceChange.stream.listen(_loadDevices);
@@ -43,37 +58,13 @@ mixin MediaDeviceContextMixin on ChangeNotifier {
     notifyListeners();
   }
 
-  void setRoom(Room? room) {
-    _room = room;
-  }
-
-  LocalVideoTrack? _localVideoTrack;
-
-  LocalVideoTrack? get localVideoTrack => _localVideoTrack;
-
-  bool get cameraOpened =>
-      _room != null ? isCameraEnabled : _localVideoTrack != null;
-
-  Future<void> resetLocalTracks() async {
-    _localAudioTrack = null;
-    _localVideoTrack = null;
-    notifyListeners();
-  }
-
-  LocalAudioTrack? _localAudioTrack;
-
-  LocalAudioTrack? get localAudioTrack => _localAudioTrack;
-
-  bool get microphoneOpened =>
-      _room != null ? isMicrophoneEnabled : _localAudioTrack != null;
-
   void selectAudioInput(MediaDevice device) async {
     selectedAudioInputDeviceId = device.deviceId;
-    if (_room != null) {
-      await _room!.setAudioInputDevice(device);
+    if (_roomCtx.connected) {
+      await _room?.setAudioInputDevice(device);
     } else {
-      await _localAudioTrack?.dispose();
-      _localAudioTrack = await LocalAudioTrack.create(
+      await _roomCtx.localAudioTrack?.dispose();
+      _roomCtx.localAudioTrack = await LocalAudioTrack.create(
         AudioCaptureOptions(
           deviceId: selectedAudioInputDeviceId,
         ),
@@ -84,19 +75,19 @@ mixin MediaDeviceContextMixin on ChangeNotifier {
 
   void selectAudioOutput(MediaDevice device) async {
     selectedAudioOutputDeviceId = device.deviceId;
-    if (_room != null) {
-      await _room!.setAudioOutputDevice(device);
+    if (_roomCtx.connected) {
+      await _room?.setAudioOutputDevice(device);
     }
     notifyListeners();
   }
 
   Future<void> selectVideoInput(MediaDevice device) async {
     selectedVideoInputDeviceId = device.deviceId;
-    if (_room != null) {
-      await _room!.setVideoInputDevice(device);
+    if (_roomCtx.connected) {
+      await _room?.setVideoInputDevice(device);
     } else {
-      await _localVideoTrack?.dispose();
-      _localVideoTrack = await LocalVideoTrack.createCameraTrack(
+      await _roomCtx.localVideoTrack?.dispose();
+      _roomCtx.localVideoTrack = await LocalVideoTrack.createCameraTrack(
         CameraCaptureOptions(
           cameraPosition: position,
           deviceId: device.deviceId,
@@ -106,17 +97,14 @@ mixin MediaDeviceContextMixin on ChangeNotifier {
     notifyListeners();
   }
 
-  bool get isMicrophoneEnabled =>
-      _room?.localParticipant?.isMicrophoneEnabled() ?? false;
-
   void enableMicrophone() async {
-    if (microphoneOpened) {
+    if (_roomCtx.microphoneOpened) {
       return;
     }
     if (_room?.localParticipant != null) {
       await _room?.localParticipant?.setMicrophoneEnabled(true);
     } else {
-      _localAudioTrack ??= await LocalAudioTrack.create(
+      _roomCtx.localAudioTrack ??= await LocalAudioTrack.create(
         AudioCaptureOptions(
           deviceId: selectedAudioInputDeviceId,
         ),
@@ -126,32 +114,29 @@ mixin MediaDeviceContextMixin on ChangeNotifier {
   }
 
   void disableMicrophone() async {
-    if (!microphoneOpened) {
+    if (!_roomCtx.microphoneOpened) {
       return;
     }
-    if (_room != null) {
+    if (_roomCtx.connected) {
       await _room?.localParticipant?.setMicrophoneEnabled(false);
     } else {
-      await _localAudioTrack?.dispose();
-      _localAudioTrack = null;
+      await _roomCtx.localAudioTrack?.dispose();
+      _roomCtx.localAudioTrack = null;
     }
     notifyListeners();
   }
 
-  bool get isCameraEnabled =>
-      _room?.localParticipant?.isCameraEnabled() ?? false;
-
   void enableCamera() async {
-    if (cameraOpened) {
+    if (_roomCtx.cameraOpened) {
       return;
     }
-    if (_room != null) {
+    if (_roomCtx.connected) {
       await _room?.localParticipant?.setCameraEnabled(true,
           cameraCaptureOptions: CameraCaptureOptions(
             deviceId: selectedVideoInputDeviceId,
           ));
     } else {
-      _localVideoTrack ??= await LocalVideoTrack.createCameraTrack(
+      _roomCtx.localVideoTrack ??= await LocalVideoTrack.createCameraTrack(
         CameraCaptureOptions(
           cameraPosition: position,
           deviceId: selectedVideoInputDeviceId,
@@ -163,14 +148,14 @@ mixin MediaDeviceContextMixin on ChangeNotifier {
   }
 
   void disableCamera() async {
-    if (!cameraOpened) {
+    if (!_roomCtx.cameraOpened) {
       return;
     }
-    if (_room != null) {
+    if (_roomCtx.connected) {
       await _room?.localParticipant?.setCameraEnabled(false);
     } else {
-      await _localVideoTrack?.dispose();
-      _localVideoTrack = null;
+      await _roomCtx.localVideoTrack?.dispose();
+      _roomCtx.localVideoTrack = null;
     }
     notifyListeners();
   }

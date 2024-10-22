@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:livekit_components/src/ui/debug/logger.dart';
 
 import 'package:provider/provider.dart';
 
@@ -10,16 +11,26 @@ class FocusButton extends StatelessWidget {
     required this.sid,
   });
 
-  final String sid;
+  final String? sid;
   @override
   Widget build(BuildContext context) {
+    final roomCtx = context.read<RoomContext>();
+    Debug.log('===>     FocusButton for $sid');
     return Padding(
-      padding: const EdgeInsets.only(left: 5),
+      padding: const EdgeInsets.all(2),
       child: IconButton(
-        icon: const Icon(Icons.fullscreen),
-        color: Colors.white54,
+        icon: Icon(sid == roomCtx.focusedTrackSid
+            ? Icons.grid_view
+            : Icons.open_in_full),
+        color: Colors.white70,
         onPressed: () {
-          final roomCtx = context.read<RoomContext>();
+          if (sid == null) {
+            return;
+          }
+          if (sid == roomCtx.focusedTrackSid) {
+            roomCtx.setFocusedTrack(null);
+            return;
+          }
           roomCtx.setFocusedTrack(sid);
         },
       ),

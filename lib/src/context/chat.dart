@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 
 import 'package:livekit_client/livekit_client.dart';
 
+import '../ui/debug/logger.dart';
+
 // topic: lk-chat-topic
 class ChatMessage {
   final String message;
@@ -58,6 +60,8 @@ mixin ChatContextMixin on ChangeNotifier {
     _localParticipant = localParticipant;
     if (listener != null) {
       _listener!.on<DataReceivedEvent>((event) {
+        Debug.event('ChatContext: DataReceivedEvent');
+        
         if (event.topic == 'lk-chat-topic') {
           addMessageFromMap(
               const Utf8Decoder().convert(event.data), event.participant);

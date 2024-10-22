@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:livekit_components/src/ui/debug/logger.dart';
 
 import 'package:provider/provider.dart';
 
@@ -25,55 +26,60 @@ class ParticipantStatusBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<ParticipantContext>(
-      builder: (context, participantContext, child) => Positioned(
-        bottom: 0,
-        left: 0,
-        right: 0,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 6),
-          color: Colors.black.withOpacity(0.6),
-          child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                if (showMuteStatus)
-                  Selector<ParticipantContext, bool>(
-                    selector: (context, isMuted) => participantContext.isMuted,
-                    builder: (context, isMuted, child) => isMuted
-                        ? const Icon(
-                            Icons.mic_off_sharp,
-                            color: Colors.white54,
-                            size: 20,
-                          )
-                        : const SizedBox(),
-                  ),
-                if (isScreenShare)
-                  const Icon(
-                    Icons.screen_share,
-                    color: Colors.white54,
-                    size: 20,
-                  ),
-                if (showName)
-                  Selector<ParticipantContext, String?>(
-                    selector: (context, name) => participantContext.name,
-                    builder: (context, name, child) => name != null
-                        ? Flexible(
-                            child: Text(
-                              isScreenShare ? '$name\'s screen' : name,
-                              style: const TextStyle(
-                                color: Colors.white54,
-                                fontSize: 16,
+      builder: (context, participantContext, child) {
+        Debug.log(
+            '===>     ParticipantStatusBar for ${participantContext.name}');
+        return Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            color: Colors.black.withOpacity(0.6),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  if (showMuteStatus)
+                    Selector<ParticipantContext, bool>(
+                      selector: (context, isMuted) =>
+                          participantContext.isMuted,
+                      builder: (context, isMuted, child) => isMuted
+                          ? const Icon(
+                              Icons.mic_off_sharp,
+                              color: Colors.white54,
+                              size: 20,
+                            )
+                          : const SizedBox(),
+                    ),
+                  if (isScreenShare)
+                    const Icon(
+                      Icons.screen_share,
+                      color: Colors.white54,
+                      size: 20,
+                    ),
+                  if (showName)
+                    Selector<ParticipantContext, String?>(
+                      selector: (context, name) => participantContext.name,
+                      builder: (context, name, child) => name != null
+                          ? Flexible(
+                              child: Text(
+                                isScreenShare ? '$name\'s screen' : name,
+                                style: const TextStyle(
+                                  color: Colors.white54,
+                                  fontSize: 16,
+                                ),
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          )
-                        : Container(),
-                  ),
-                if (showConnectionQuality) const ConnectionQualityIndicator(),
-                if (showE2EEStatus) const E2EEncryptionIndicator(),
-              ]),
-        ),
-      ),
+                            )
+                          : Container(),
+                    ),
+                  if (showConnectionQuality) const ConnectionQualityIndicator(),
+                  if (showE2EEStatus) const E2EEncryptionIndicator(),
+                ]),
+          ),
+        );
+      },
     );
   }
 }

@@ -7,9 +7,6 @@ import 'package:intl/intl.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
-import 'src/prejoin.dart';
-import 'src/utils.dart';
-
 void main() {
   final format = DateFormat('HH:mm:ss');
   // configure logs for debugging
@@ -47,14 +44,22 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
 
+  final url = 'ws://192.168.2.141:7880';
+  final token =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzEzNjkzNjgsImlzcyI6IkFQSXJramtRYVZRSjVERSIsIm5hbWUiOiJmbHQiLCJuYmYiOjE3Mjk1NjkzNjgsInN1YiI6ImZsdCIsInZpZGVvIjp7InJvb20iOiJsaXZlIiwicm9vbUpvaW4iOnRydWV9fQ.HVjMK_t00FlF24xIn-IZot1ROeb6JjV8QstRf2577yw';
+
   void _onJoinPressed(RoomContext roomCtx, String name, String roomName) async {
     if (kDebugMode) {
       print('Joining room $roomName as $name');
     }
     try {
-      final details = await fetchConnectionDetails(name, roomName);
+      //final details = await fetchConnectionDetails(name, roomName);
+      //await roomCtx.connect(
+      //    url: details.serverUrl, token: details.participantToken);
       await roomCtx.connect(
-          url: details.serverUrl, token: details.participantToken);
+        url: url,
+        token: token,
+      );
     } catch (e) {
       if (kDebugMode) {
         print('Failed to join room: $e');
@@ -91,9 +96,11 @@ class MyHomePage extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
                                   Expanded(
-                                    child: ParticipantListBuilder(
+                                    child: ParticipantLoop(
                                       layoutBuilder:
-                                          const CarouselLayoutBuilder(),
+                                          roomCtx.focusedTrackSid != null
+                                              ? const CarouselLayoutBuilder()
+                                              : const GridLayoutBuilder(),
                                       builder: (context) => const Padding(
                                         padding: EdgeInsets.all(2.0),
                                         child: ParticipantTile(),

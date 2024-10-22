@@ -4,6 +4,7 @@ import 'package:livekit_client/livekit_client.dart';
 import 'package:provider/provider.dart';
 
 import '../../context/participant.dart';
+import '../debug/logger.dart';
 
 class ConnectionQualityIndicator extends StatelessWidget {
   const ConnectionQualityIndicator({
@@ -13,8 +14,10 @@ class ConnectionQualityIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<ParticipantContext>(
-      builder: (context, participantContext, child) =>
-          Selector<ParticipantContext, ConnectionQuality>(
+        builder: (context, participantContext, child) {
+      Debug.log(
+          '====>        ConnectionQualityIndicator for ${participantContext.name}');
+      return Selector<ParticipantContext, ConnectionQuality>(
         selector: (context, connectionQuality) =>
             participantContext.connectionQuality,
         builder: (context, connectionQuality, child) => Padding(
@@ -33,7 +36,7 @@ class ConnectionQualityIndicator extends StatelessWidget {
             size: 20,
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 }
