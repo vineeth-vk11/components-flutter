@@ -91,4 +91,17 @@ mixin ChatContextMixin on ChangeNotifier {
     final message = ChatMessage.fromJsonString(buf, participant);
     addMessage(message);
   }
+
+  bool _chatEnabled = false;
+  bool get isChatEnabled => _chatEnabled;
+
+  void enableChat() {
+    _chatEnabled = true;
+    notifyListeners();
+  }
+
+  void disableChat() {
+    _chatEnabled = false;
+    notifyListeners();
+  }
 }

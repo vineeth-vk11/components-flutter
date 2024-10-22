@@ -8,29 +8,16 @@ class ParticipantContext extends ChangeNotifier {
   ParticipantContext(this._participant)
       : _listener = _participant.createListener() {
     _listener
-      ..on<LocalTrackPublishedEvent>((event) {
-        notifyListeners();
-      })
-      ..on<LocalTrackUnpublishedEvent>((event) {
-        notifyListeners();
-      })
-      ..on<TrackPublishedEvent>((event) {
-        notifyListeners();
-      })
-      ..on<TrackUnpublishedEvent>((event) {
-        notifyListeners();
-      })
-      ..on<TrackSubscribedEvent>((event) {
-        notifyListeners();
-      })
-      ..on<TrackUnsubscribedEvent>((event) {
-        notifyListeners();
-      })
-      ..on<TrackE2EEStateEvent>((event) {
-        notifyListeners();
-      })
       ..on<SpeakingChangedEvent>((event) {
         _isSpeaking = event.speaking;
+        notifyListeners();
+      })
+      ..on<ParticipantNameUpdatedEvent>((event) {
+        _name = event.name;
+        notifyListeners();
+      })
+      ..on<ParticipantMetadataUpdatedEvent>((event) {
+        _metadata = event.metadata;
         notifyListeners();
       })
       ..on<TrackMutedEvent>((event) {
@@ -40,16 +27,27 @@ class ParticipantContext extends ChangeNotifier {
         notifyListeners();
       })
       ..on<ParticipantConnectionQualityUpdatedEvent>((event) {
+        _connectionQuality = event.connectionQuality;
         notifyListeners();
       })
-      ..on<TrackE2EEStateEvent>((event) {
+      ..on<ParticipantPermissionsUpdatedEvent>((event) {
+        _permissions = event.permissions;
         notifyListeners();
       })
       ..on<TranscriptionEvent>((e) {
         for (var seg in e.segments) {
           Debug.log('Transcription: ${seg.text} ${seg.isFinal}');
         }
+      })
+      ..on<ParticipantAttributesChanged>((event) {
+        _attributes = event.attributes;
+        notifyListeners();
       });
+
+    _name = _participant.name;
+    _metadata = _participant.metadata;
+    _connectionQuality = _participant.connectionQuality;
+    _permissions = _participant.permissions;
   }
 
   @override
@@ -58,46 +56,36 @@ class ParticipantContext extends ChangeNotifier {
     _listener.dispose();
   }
 
-  bool _isSpeaking = false;
-  bool get isSpeaking => _isSpeaking;
-
-  bool get isMuted => _participant.isMuted;
-
-  ConnectionQuality get connectionQuality => _participant.connectionQuality;
-
-  bool get isEncrypted =>
-      _participant.trackPublications.isNotEmpty && _participant.isEncrypted;
-
   bool get isLocal => _participant is LocalParticipant;
-
-  final Participant _participant;
-  Participant get participant => _participant;
 
   List<TrackPublication> get tracks =>
       _participant.trackPublications.values.toList();
 
-  List<VideoTrack> get videoTracks => tracks
-      .where((element) =>
-          element.kind == TrackType.VIDEO &&
-          element.track != null &&
-          !element.muted)
-      .map(
-        (e) => e.track as VideoTrack,
-      )
-      .toList();
+  final Participant _participant;
+  final EventsListener<ParticipantEvent> _listener;
 
-  String get sid => _participant.sid;
+  bool get isEncrypted =>
+      _participant.trackPublications.isNotEmpty && _participant.isEncrypted;
 
   String get identity => _participant.identity;
 
-  String? get metadata => _participant.metadata;
+  bool _isSpeaking = false;
+  bool get isSpeaking => _isSpeaking;
 
-  ParticipantPermissions? get permissions => _participant.permissions;
+  ConnectionQuality _connectionQuality = ConnectionQuality.good;
+  ConnectionQuality get connectionQuality => _connectionQuality;
 
-  String get name =>
-      _participant.name != '' ? _participant.name : _participant.identity;
+  String? _metadata;
+  String? get metadata => _metadata;
 
-  bool get muted => _participant.isMuted;
+  String _name = '';
+  String get name => _name;
 
-  final EventsListener<ParticipantEvent> _listener;
+  bool get isMuted => _participant.isMuted;
+
+  ParticipantPermissions? _permissions;
+  ParticipantPermissions? get permissions => _permissions;
+
+  Map<String, String> _attributes = {};
+  Map<String, String> get attributes => _attributes;
 }

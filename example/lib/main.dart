@@ -92,10 +92,9 @@ class MyHomePage extends StatelessWidget {
                                 children: <Widget>[
                                   Expanded(
                                     child: ParticipantListBuilder(
-                                      layoutBuilder: const GridLayoutBuilder(),
-                                      builder:
-                                          (context, TrackContext trackCtx) =>
-                                              const Padding(
+                                      layoutBuilder:
+                                          const CarouselLayoutBuilder(),
+                                      builder: (context) => const Padding(
                                         padding: EdgeInsets.all(2.0),
                                         child: ParticipantTile(),
                                       ),

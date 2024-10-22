@@ -5,19 +5,19 @@ import 'dart:math' as math;
 import '../../context/track.dart';
 
 abstract class ParticipantLayoutBuilder {
-  Widget build(BuildContext context, Map<TrackContext, Widget> children);
+  Widget build(BuildContext context, List<Widget> children);
 }
 
 class GridLayoutBuilder implements ParticipantLayoutBuilder {
   const GridLayoutBuilder();
 
   @override
-  Widget build(BuildContext context, Map<TrackContext, Widget> children) {
+  Widget build(BuildContext context, List<Widget> children) {
     var deviceScreenType = getDeviceType(MediaQuery.of(context).size);
     return GridView.count(
-      crossAxisCount: deviceScreenType != DeviceScreenType.mobile ? 2 : 4,
+      crossAxisCount: deviceScreenType == DeviceScreenType.mobile ? 2 : 4,
       childAspectRatio: 1.5,
-      children: children.values.toList(),
+      children: children,
     );
   }
 }
@@ -26,7 +26,7 @@ class CarouselLayoutBuilder implements ParticipantLayoutBuilder {
   const CarouselLayoutBuilder();
 
   @override
-  Widget build(BuildContext context, Map<TrackContext, Widget> children) {
+  Widget build(BuildContext context, List<Widget> children) {
     return Row(
       children: [
         if (children.length > 1)
@@ -39,13 +39,12 @@ class CarouselLayoutBuilder implements ParticipantLayoutBuilder {
                 itemBuilder: (BuildContext context, int index) => SizedBox(
                   width: 180,
                   height: 120,
-                  child: children.values.toList()[index + 1],
+                  child: children[index + 1],
                 ),
               ),
             ),
           ),
-        Expanded(
-            child: children.isNotEmpty ? children.values.first : Container()),
+        Expanded(child: children.isNotEmpty ? children.first : Container()),
       ],
     );
   }
@@ -55,9 +54,9 @@ class FocusLayout implements ParticipantLayoutBuilder {
   const FocusLayout();
 
   @override
-  Widget build(BuildContext context, Map<TrackContext, Widget> children) {
+  Widget build(BuildContext context, List<Widget> children) {
     return Stack(
-      children: children.values.toList(),
+      children: children,
     );
   }
 }

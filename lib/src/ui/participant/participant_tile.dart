@@ -1,16 +1,15 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 
 import 'package:livekit_client/livekit_client.dart';
 import 'package:provider/provider.dart';
 
-import '../../context/participant.dart';
-import '../../types/theme.dart';
-import '../debug/logger.dart';
-import 'is_speaking_indicator.dart';
-import 'participant_status_bar.dart';
+import '../../context/room.dart';
 import '../../context/track.dart';
+
+import 'focus_button.dart';
+import 'is_speaking_indicator.dart';
+import 'no_video_widgets.dart';
+import 'participant_status_bar.dart';
 
 class ParticipantTile extends StatelessWidget {
   const ParticipantTile({
@@ -19,41 +18,33 @@ class ParticipantTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ParticipantContext>(
-      builder: (context, participantContext, child) {
-        var ctx = Provider.of<TrackContext>(context);
-        var videoTrack = ctx.isScreenShare ? ctx.screenTrack : ctx.videoTrack;
-        Debug.log(
-            'ParticipantWidget build ${participantContext.participant.identity}');
-        return IsSpeakingIndicator(
-          builder: (context) => Stack(
-            children: [
-              videoTrack != null
+    var trackCtx = context.read<TrackContext>();
+    var roomCtx = context.read<RoomContext>();
+    return IsSpeakingIndicator(
+      builder: (context) => Stack(
+        children: [
+          Consumer<TrackContext>(
+            builder: (context, trackCtx, child) {
+              return !trackCtx.isMuted
                   ? Expanded(
-                      child: VideoTrackRenderer(videoTrack),
+                      child: VideoTrackRenderer(trackCtx.videoTrack!),
                     )
-                  : Expanded(
-                      child: Center(
-                        child: LayoutBuilder(
-                          builder: (context, constraints) => Icon(
-                            Icons.videocam_off_outlined,
-                            color: LKColors.lkBlue,
-                            size: math.min(constraints.maxHeight,
-                                    constraints.maxWidth) *
-                                0.3,
-                          ),
-                        ),
-                      ),
-                    ),
-              ParticipantStatusBar(
-                showMuteStatus: !ctx.isScreenShare,
-                isScreenShare: ctx.isScreenShare,
-                showE2EEStatus: !ctx.isScreenShare,
-              ),
-            ],
+                  : const NoVideoWidget();
+            },
           ),
-        );
-      },
+          if (trackCtx.sid != roomCtx.focusedTrackSid)
+            Positioned(
+              top: 0,
+              right: 0,
+              child: FocusButton(sid: trackCtx.sid),
+            ),
+          ParticipantStatusBar(
+            showMuteStatus: !trackCtx.isScreenShare,
+            isScreenShare: trackCtx.isScreenShare,
+            showE2EEStatus: !trackCtx.isScreenShare,
+          ),
+        ],
+      ),
     );
   }
 }

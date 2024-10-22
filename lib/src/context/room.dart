@@ -2,6 +2,7 @@ import 'package:flutter/material.dart' hide ConnectionState;
 
 import 'package:livekit_client/livekit_client.dart';
 
+import '../ui/debug/logger.dart';
 import 'chat.dart';
 import 'media_device.dart';
 import 'toast.dart';
@@ -26,6 +27,9 @@ class RoomContext extends ChangeNotifier
         showConnectionStateToast(room.connectionState);
         _connected = true;
         _connecting = false;
+        _roomMetadata = event.room.metadata;
+        _activeRecording = event.room.isRecording;
+        _roomName = event.room.name;
         notifyListeners();
       })
       ..on<RoomDisconnectedEvent>((event) {
@@ -33,6 +37,18 @@ class RoomContext extends ChangeNotifier
         setRoom(null);
         chatContextSetup(null, null);
         _connected = false;
+        notifyListeners();
+      })
+      ..on<RoomMetadataChangedEvent>((event) {
+        _roomMetadata = event.metadata;
+        notifyListeners();
+      })
+      ..on<RoomRecordingStatusChanged>((event) {
+        _activeRecording = event.activeRecording;
+        notifyListeners();
+      })
+      ..on<ParticipantNameUpdatedEvent>((event) {
+        _roomName = event.name;
         notifyListeners();
       })
       ..on<RoomEvent>((event) {
@@ -69,8 +85,14 @@ class RoomContext extends ChangeNotifier
 
   Room get room => _room;
 
-  String? get roomName => _room.name;
-  String? get roomMetadata => _room.metadata;
+  String? _roomName;
+  String? get roomName => _roomName;
+
+  String? _roomMetadata;
+  String? get roomMetadata => _roomMetadata;
+
+  bool _activeRecording = false;
+  bool get activeRecording => _activeRecording;
 
   ConnectionState get connectState => _room.connectionState;
 
@@ -134,18 +156,14 @@ class RoomContext extends ChangeNotifier
     ];
   }
 
-  bool _chatEnabled = false;
-  bool get isChatEnabled => _chatEnabled;
-
-  void enableChat() {
-    _chatEnabled = true;
+  void setFocusedTrack(String? sid) {
+    _focusedTrackSid = sid;
+    Debug.log('Focused track: $sid');
     notifyListeners();
   }
 
-  void disableChat() {
-    _chatEnabled = false;
-    notifyListeners();
-  }
+  String? _focusedTrackSid;
+  String? get focusedTrackSid => _focusedTrackSid;
 
   @override
   void dispose() {
