@@ -15,6 +15,7 @@ class ControlBar extends StatelessWidget {
   const ControlBar(
       {super.key,
       this.microphone = true,
+      this.audioOutput = true,
       this.camera = true,
       this.chat = true,
       this.screenShare = true,
@@ -22,6 +23,7 @@ class ControlBar extends StatelessWidget {
       this.settings = true});
 
   final bool microphone;
+  final bool audioOutput;
   final bool camera;
   final bool chat;
   final bool screenShare;
@@ -43,7 +45,8 @@ class ControlBar extends StatelessWidget {
             runSpacing: 6,
             children: [
               if (microphone) const MicrophoneSelectButton(),
-              if (lkPlatformIsDesktop()) const AudioOutputSelectButton(),
+              if (lkPlatformIsDesktop() && audioOutput)
+                const AudioOutputSelectButton(),
               if (camera) const CameraSelectButton(),
               if (screenShare) const ScreenShareToggle(),
               if (chat) const ChatToggle(),

@@ -10,33 +10,38 @@ class RoomContext extends ChangeNotifier with ChatContextMixin, FToastMixin {
   RoomContext({
     String? url,
     String? token,
+    Room? room,
     bool connect = false,
     RoomOptions roomOptions = const RoomOptions(),
     ConnectOptions? connectOptions,
+    this.onConnected,
+    this.onDisconnected,
   })  : _url = url,
         _token = token,
         _connectOptions = connectOptions {
-    _room = Room(roomOptions: roomOptions);
+    _room = room ?? Room(roomOptions: roomOptions);
     _listener = _room.createListener();
     _listener
       ..on<RoomConnectedEvent>((event) {
         Debug.event('RoomContext: RoomConnectedEvent');
         chatContextSetup(_listener, _room.localParticipant!);
-        showConnectionStateToast(room.connectionState);
+        showConnectionStateToast(_room.connectionState);
         _connected = true;
         _connecting = false;
         _roomMetadata = event.room.metadata;
         _activeRecording = event.room.isRecording;
         _roomName = event.room.name;
         sortParticipants();
+        onConnected?.call();
         notifyListeners();
       })
       ..on<RoomDisconnectedEvent>((event) {
         Debug.event('RoomContext: RoomDisconnectedEvent');
-        showConnectionStateToast(room.connectionState);
+        showConnectionStateToast(_room.connectionState);
         chatContextSetup(null, null);
         _connected = false;
         _participants.clear();
+        onDisconnected?.call();
         notifyListeners();
       })
       ..on<RoomMetadataChangedEvent>((event) {
@@ -101,6 +106,9 @@ class RoomContext extends ChangeNotifier with ChatContextMixin, FToastMixin {
   final ConnectOptions? _connectOptions;
   FastConnectOptions? _fastConnectOptions;
   late EventsListener<RoomEvent> _listener;
+
+  Function()? onConnected;
+  Function()? onDisconnected;
 
   String? _url;
   String? _token;
