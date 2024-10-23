@@ -13,7 +13,7 @@ void main() {
   Logger.root.level = Level.FINE;
   Logger.root.onRecord.listen((record) {
     if (kDebugMode) {
-      //print('${format.format(record.time)}: ${record.message}');
+      print('${format.format(record.time)}: ${record.message}');
     }
   });
 
@@ -43,6 +43,7 @@ class MyHomePage extends StatelessWidget {
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzEzNjkzNjgsImlzcyI6IkFQSXJramtRYVZRSjVERSIsIm5hbWUiOiJmbHQiLCJuYmYiOjE3Mjk1NjkzNjgsInN1YiI6ImZsdCIsInZpZGVvIjp7InJvb20iOiJsaXZlIiwicm9vbUpvaW4iOnRydWV9fQ.HVjMK_t00FlF24xIn-IZot1ROeb6JjV8QstRf2577yw';
 
   /// handle join button pressed, fetch connection details and connect to room.
+  // ignore: unused_element
   void _onJoinPressed(RoomContext roomCtx, String name, String roomName) async {
     if (kDebugMode) {
       print('Joining room: name=$name, roomName=$roomName');
