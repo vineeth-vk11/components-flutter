@@ -21,7 +21,7 @@ export 'src/ui/participant/participant_loop.dart';
 export 'src/ui/participant/is_speaking_indicator.dart';
 export 'src/ui/participant/participant_status_bar.dart';
 export 'src/ui/participant/video_track_widget.dart';
-export 'src/ui/participant/no_video_widget.dart';
+export 'src/ui/participant/no_track_widget.dart';
 export 'src/ui/participant/focus_toggle.dart';
 export 'src/ui/prejoin/prejoin.dart';
 export 'src/ui/prejoin/camera_preview.dart';

@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../../context/track.dart';
 import '../debug/logger.dart';
-import 'no_video_widget.dart';
+import 'no_track_widget.dart';
 
 class VideoTrackWidget extends StatelessWidget {
   const VideoTrackWidget({
@@ -20,7 +20,7 @@ class VideoTrackWidget extends StatelessWidget {
     Debug.log('===>     VideoTrackWidget for $sid');
 
     if (trackCtx == null) {
-      return const NoVideoWidget();
+      return const NoTrackWidget();
     }
 
     return Selector<TrackContext, bool>(
@@ -28,7 +28,7 @@ class VideoTrackWidget extends StatelessWidget {
       builder: (BuildContext context, isMuted, child) =>
           !isMuted && trackCtx.videoTrack != null
               ? VideoTrackRenderer(trackCtx.videoTrack!, key: ValueKey(sid))
-              : const NoVideoWidget(),
+              : const NoTrackWidget(),
     );
   }
 }

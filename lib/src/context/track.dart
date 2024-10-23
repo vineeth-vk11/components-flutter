@@ -48,15 +48,19 @@ class TrackContext extends ChangeNotifier {
 
   final TrackPublication? pub;
 
+  bool get isLocal => _participant is LocalParticipant;
+
   bool get isMuted => pub?.muted ?? true;
 
-  VideoTrack? get videoTrack => pub?.track as VideoTrack?;
+  VideoTrack? get videoTrack => isVideo ? pub?.track as VideoTrack? : null;
 
-  AudioTrack? get audioTrack => pub?.track as AudioTrack?;
+  AudioTrack? get audioTrack => isAudio ? pub?.track as AudioTrack? : null;
 
   bool get isScreenShare => pub?.source == TrackSource.screenShareVideo;
 
   bool get isVideo => pub?.kind == TrackType.VIDEO;
+
+  bool get isAudio => pub?.kind == TrackType.AUDIO;
 
   String get sid => pub?.sid ?? '';
 
