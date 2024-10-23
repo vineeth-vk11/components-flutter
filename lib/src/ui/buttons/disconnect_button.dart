@@ -7,9 +7,12 @@ import 'package:responsive_builder/responsive_builder.dart';
 import '../../context/room.dart';
 
 class DisconnectButton extends StatelessWidget {
-  const DisconnectButton({super.key, this.title = 'Leave'});
+  const DisconnectButton(
+      {super.key, this.title = 'Leave', this.showLabel = false});
 
   final String title;
+
+  final bool showLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +48,7 @@ class DisconnectButton extends StatelessWidget {
               children: [
                 const Icon(Icons.logout),
                 const SizedBox(width: 2),
-                if (deviceScreenType != DeviceScreenType.mobile)
+                if (deviceScreenType != DeviceScreenType.mobile || showLabel)
                   Text(
                     title,
                     style: const TextStyle(fontSize: 14),

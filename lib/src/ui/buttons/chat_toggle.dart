@@ -8,7 +8,9 @@ import '../../context/room.dart';
 import '../../types/theme.dart';
 
 class ChatToggle extends StatelessWidget {
-  const ChatToggle({super.key});
+  const ChatToggle({super.key, this.showLabel = false});
+
+  final bool showLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +48,7 @@ class ChatToggle extends StatelessWidget {
               children: [
                 const Icon(Icons.chat_outlined),
                 const SizedBox(width: 2),
-                if (deviceScreenType != DeviceScreenType.mobile)
+                if (deviceScreenType != DeviceScreenType.mobile || showLabel)
                   const Text(
                     'Chat',
                     style: TextStyle(fontSize: 14),

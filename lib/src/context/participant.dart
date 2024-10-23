@@ -1,11 +1,19 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 import 'package:livekit_client/livekit_client.dart';
+import 'package:provider/provider.dart';
 
 import '../ui/debug/logger.dart';
 
 class ParticipantContext extends ChangeNotifier {
   static int createCount = 0;
+
+  /// Get the [ParticipantContext] from the [context].
+  /// this method must be called under the [ParticipantLoop] widget.
+  static ParticipantContext? of(BuildContext context) {
+    return Provider.of<ParticipantContext?>(context);
+  }
+
   ParticipantContext(this._participant)
       : _listener = _participant.createListener() {
     _listener

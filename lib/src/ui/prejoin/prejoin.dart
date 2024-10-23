@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
+import '../../context/media_device.dart';
 import '../../context/room.dart';
 import '../buttons/camera_select_button.dart';
 import '../buttons/join_button.dart';
@@ -54,65 +55,70 @@ class Prejoin extends StatelessWidget {
                 width: 480,
                 child: Row(
                   children: [
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Container(
-                            padding: const EdgeInsets.all(8.0),
-                            child: const CameraPreview(),
-                          ),
-                          SizedBox(
-                            width: 360,
-                            child: Container(
+                    ChangeNotifierProvider(
+                      create: (_) => MediaDeviceContext(roomCtx: roomCtx),
+                      child: Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Container(
                               padding: const EdgeInsets.all(8.0),
-                              child: const Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  MicrophoneSelectButton(
-                                    showLabel: true,
-                                  ),
-                                  CameraSelectButton(
-                                    showLabel: true,
-                                  ),
-                                ],
+                              child: const CameraPreview(),
+                            ),
+                            SizedBox(
+                              width: 360,
+                              child: Container(
+                                padding: const EdgeInsets.all(8.0),
+                                child: const Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    MicrophoneSelectButton(
+                                      showLabel: true,
+                                    ),
+                                    CameraSelectButton(
+                                      showLabel: true,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(
-                            width: 360,
-                            child: Container(
-                              padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-                              child: TextInput(
-                                onTextChanged: onTextUrlChanged,
-                                hintText: 'Enter Livekit Server URL',
-                                text: url,
+                            SizedBox(
+                              width: 360,
+                              child: Container(
+                                padding:
+                                    const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                                child: TextInput(
+                                  onTextChanged: onTextUrlChanged,
+                                  hintText: 'Enter Livekit Server URL',
+                                  text: url,
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(
-                            width: 360,
-                            child: Container(
-                              padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-                              child: TextInput(
-                                onTextChanged: onTextTokenChanged,
-                                hintText: 'Enter Token',
-                                text: token,
+                            SizedBox(
+                              width: 360,
+                              child: Container(
+                                padding:
+                                    const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                                child: TextInput(
+                                  onTextChanged: onTextTokenChanged,
+                                  hintText: 'Enter Token',
+                                  text: token,
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(
-                            width: 360,
-                            height: 64,
-                            child: Container(
-                              padding: const EdgeInsets.all(8.0),
-                              child: JoinButton(
-                                onPressed: () => _handleJoinPressed(roomCtx),
+                            SizedBox(
+                              width: 360,
+                              height: 64,
+                              child: Container(
+                                padding: const EdgeInsets.all(8.0),
+                                child: JoinButton(
+                                  onPressed: () => _handleJoinPressed(roomCtx),
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ],

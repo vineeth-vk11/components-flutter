@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 
 import 'package:livekit_client/livekit_client.dart';
+import 'package:provider/provider.dart';
 
 import '../ui/debug/logger.dart';
 
 class TrackContext extends ChangeNotifier {
+  /// Get the [TrackContext] from the [context].
+  /// this method must be called under the [ParticipantLoop] widget.
+  static TrackContext? of(BuildContext context) {
+    return Provider.of<TrackContext?>(context);
+  }
+
   TrackContext(
     this._participant, {
     required this.pub,

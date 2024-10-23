@@ -5,11 +5,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_background/flutter_background.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart' as rtc;
 import 'package:livekit_client/livekit_client.dart';
+import 'package:provider/provider.dart';
 
 import '../ui/debug/logger.dart';
 import 'room.dart';
 
 class MediaDeviceContext extends ChangeNotifier {
+  /// Get the [MediaDeviceContext] from the [context].
+  /// this method must be called under the [ControlBar] widget.
+  static MediaDeviceContext? of(BuildContext context) {
+    return Provider.of<MediaDeviceContext?>(context);
+  }
+
   MediaDeviceContext({
     required RoomContext roomCtx,
   })  : _roomCtx = roomCtx,

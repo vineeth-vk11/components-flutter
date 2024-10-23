@@ -3,11 +3,24 @@ import 'dart:async';
 import 'package:flutter/material.dart' hide ConnectionState;
 
 import 'package:livekit_client/livekit_client.dart';
+import 'package:provider/provider.dart';
 
 import '../ui/debug/logger.dart';
 import 'chat.dart';
 
 class RoomContext extends ChangeNotifier with ChatContextMixin {
+  /// Get the [RoomContext] from the [context].
+  /// this method must be called under the [LivekitRoom] widget.
+  static RoomContext? of(BuildContext context) {
+    return Provider.of<RoomContext?>(context);
+  }
+
+  /// Get the [ChatContextMixin] from the [context].
+  /// this method must be called under the [LivekitRoom] widget.
+  static ChatContextMixin? chatOf(BuildContext context) {
+    return Provider.of<RoomContext?>(context);
+  }
+
   RoomContext({
     String? url,
     String? token,
