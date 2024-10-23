@@ -60,14 +60,19 @@ class MediaDeviceContext extends ChangeNotifier {
     _audioOutputs = devices.where((d) => d.kind == 'audiooutput').toList();
     _videoInputs = devices.where((d) => d.kind == 'videoinput').toList();
 
-    selectedAudioInputDeviceId ??= _audioInputs?.first.deviceId;
-    selectedVideoInputDeviceId ??= _videoInputs?.first.deviceId;
-    selectedAudioOutputDeviceId ??= _audioOutputs?.first.deviceId;
+    selectedAudioInputDeviceId ??=
+        Hardware.instance.selectedAudioInput?.deviceId ??
+            _audioInputs?.first.deviceId;
+    selectedVideoInputDeviceId ??=
+        Hardware.instance.selectedVideoInput?.deviceId ??
+            _videoInputs?.first.deviceId;
+    selectedAudioOutputDeviceId ??=
+        Hardware.instance.selectedAudioOutput?.deviceId ??
+            _audioOutputs?.first.deviceId;
     notifyListeners();
   }
 
   void selectAudioInput(MediaDevice device) async {
-    selectedAudioInputDeviceId = device.deviceId;
     if (_roomCtx.connected) {
       await _room?.setAudioInputDevice(device);
     } else {
@@ -78,19 +83,19 @@ class MediaDeviceContext extends ChangeNotifier {
         ),
       );
     }
+    selectedAudioInputDeviceId = device.deviceId;
     notifyListeners();
   }
 
   void selectAudioOutput(MediaDevice device) async {
-    selectedAudioOutputDeviceId = device.deviceId;
     if (_roomCtx.connected) {
       await _room?.setAudioOutputDevice(device);
     }
+    selectedAudioOutputDeviceId = device.deviceId;
     notifyListeners();
   }
 
   Future<void> selectVideoInput(MediaDevice device) async {
-    selectedVideoInputDeviceId = device.deviceId;
     if (_roomCtx.connected) {
       await _room?.setVideoInputDevice(device);
     } else {
@@ -101,6 +106,7 @@ class MediaDeviceContext extends ChangeNotifier {
           deviceId: device.deviceId,
         ),
       );
+      selectedVideoInputDeviceId = device.deviceId;
     }
     notifyListeners();
   }
