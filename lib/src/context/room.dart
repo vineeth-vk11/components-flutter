@@ -6,9 +6,8 @@ import 'package:livekit_client/livekit_client.dart';
 
 import '../ui/debug/logger.dart';
 import 'chat.dart';
-import 'toast.dart';
 
-class RoomContext extends ChangeNotifier with ChatContextMixin, FToastMixin {
+class RoomContext extends ChangeNotifier with ChatContextMixin {
   RoomContext({
     String? url,
     String? token,
@@ -16,8 +15,6 @@ class RoomContext extends ChangeNotifier with ChatContextMixin, FToastMixin {
     bool connect = false,
     RoomOptions roomOptions = const RoomOptions(),
     ConnectOptions? connectOptions,
-    this.onConnected,
-    this.onDisconnected,
   })  : _url = url,
         _token = token,
         _connectOptions = connectOptions {
@@ -27,23 +24,31 @@ class RoomContext extends ChangeNotifier with ChatContextMixin, FToastMixin {
       ..on<RoomConnectedEvent>((event) {
         Debug.event('RoomContext: RoomConnectedEvent');
         chatContextSetup(_listener, _room.localParticipant!);
-        showConnectionStateToast(_room.connectionState);
+        _connectionState = _room.connectionState;
         _connected = true;
         _connecting = false;
         _roomMetadata = event.room.metadata;
         _activeRecording = event.room.isRecording;
         _roomName = event.room.name;
         sortParticipants();
-        onConnected?.call();
         notifyListeners();
       })
       ..on<RoomDisconnectedEvent>((event) {
         Debug.event('RoomContext: RoomDisconnectedEvent');
-        showConnectionStateToast(_room.connectionState);
+        _connectionState = _room.connectionState;
         chatContextSetup(null, null);
         _connected = false;
         _participants.clear();
-        onDisconnected?.call();
+        notifyListeners();
+      })
+      ..on<RoomReconnectedEvent>((event) {
+        Debug.event('RoomContext: RoomReconnectedEvent');
+        _connectionState = _room.connectionState;
+        notifyListeners();
+      })
+      ..on<RoomReconnectingEvent>((event) {
+        Debug.event('RoomContext: RoomReconnectingEvent');
+        _connectionState = _room.connectionState;
         notifyListeners();
       })
       ..on<RoomMetadataChangedEvent>((event) {
@@ -106,9 +111,6 @@ class RoomContext extends ChangeNotifier with ChatContextMixin, FToastMixin {
   FastConnectOptions? _fastConnectOptions;
   late EventsListener<RoomEvent> _listener;
 
-  Function()? onConnected;
-  Function()? onDisconnected;
-
   String? _url;
   String? _token;
   late Room _room;
@@ -124,7 +126,8 @@ class RoomContext extends ChangeNotifier with ChatContextMixin, FToastMixin {
   bool _activeRecording = false;
   bool get activeRecording => _activeRecording;
 
-  ConnectionState get connectState => _room.connectionState;
+  ConnectionState _connectionState = ConnectionState.disconnected;
+  ConnectionState get connectionState => _connectionState;
 
   bool _connecting = false;
   bool get connecting => _connecting;
@@ -164,7 +167,7 @@ class RoomContext extends ChangeNotifier with ChatContextMixin, FToastMixin {
       await resetLocalTracks();
     }
 
-    showConnectionStateToast(ConnectionState.connecting);
+    _connectionState = ConnectionState.connecting;
     _connecting = true;
     notifyListeners();
 
@@ -179,8 +182,9 @@ class RoomContext extends ChangeNotifier with ChatContextMixin, FToastMixin {
       _token ??= token;
       _connecting = false;
     } catch (e) {
-      showConnectionStateToast(ConnectionState.disconnected);
+      _connectionState = ConnectionState.disconnected;
       _connecting = false;
+      notifyListeners();
       rethrow;
     }
   }
