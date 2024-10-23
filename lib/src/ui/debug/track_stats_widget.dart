@@ -12,7 +12,7 @@ class TrackStatsWidget extends StatelessWidget {
     var trackCtx = Provider.of<TrackContext?>(context);
     var roomCtx = Provider.of<RoomContext?>(context);
 
-    if (trackCtx == null || roomCtx?.focusedTrackSid != trackCtx?.sid) {
+    if (trackCtx == null || roomCtx?.focusedTrackSid != trackCtx.sid) {
       return const SizedBox();
     }
 
