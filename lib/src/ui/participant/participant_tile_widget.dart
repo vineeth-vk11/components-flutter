@@ -4,41 +4,43 @@ import 'package:provider/provider.dart';
 
 import '../../context/track.dart';
 import '../debug/logger.dart';
-import '../debug/track_stats.dart';
+import '../debug/track_stats_widget.dart';
 import 'focus_toggle.dart';
 import 'is_speaking_indicator.dart';
 import 'participant_status_bar.dart';
-import 'video_track_widgets.dart';
+import 'video_track_widget.dart';
 
-class ParticipantTile extends StatelessWidget {
-  const ParticipantTile({
+class ParticipantTileWidget extends StatelessWidget {
+  const ParticipantTileWidget({
     super.key,
     this.showSpeakingIndicator = true,
   });
 
   final bool showSpeakingIndicator;
 
-  Widget buildContent(BuildContext context, TrackContext? trackCtx) {
-    return Stack(
-      children: [
-        /// video track
-        const VideoTrackWidget(),
-        if (trackCtx != null)
-          const Positioned(
+  Widget buildContent() => const Stack(
+        children: [
+          /// video track widget in the background
+          VideoTrackWidget(),
+
+          /// focus toggle button at the top right
+          Positioned(
             top: 0,
             right: 0,
             child: FocusToggle(),
           ),
-        if (trackCtx != null)
-          const Positioned(
+
+          /// track stats at the bottom right
+          Positioned(
             bottom: 30,
             right: 0,
             child: TrackStatsWidget(),
           ),
-        const ParticipantStatusBar(),
-      ],
-    );
-  }
+
+          /// status bar at the bottom
+          ParticipantStatusBar(),
+        ],
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +50,7 @@ class ParticipantTile extends StatelessWidget {
 
     if (showSpeakingIndicator) {
       return IsSpeakingIndicator(
-        builder: (context) => buildContent(context, trackCtx),
+        builder: (context) => buildContent(),
       );
     }
 
@@ -56,7 +58,7 @@ class ParticipantTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
       ),
-      child: buildContent(context, trackCtx),
+      child: buildContent(),
     );
   }
 }

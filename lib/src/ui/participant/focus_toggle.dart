@@ -17,6 +17,9 @@ class FocusToggle extends StatelessWidget {
     var trackCtx = Provider.of<TrackContext?>(context);
     final String? sid = trackCtx?.sid;
     Debug.log('===>     FocusButton for $sid');
+    if (trackCtx == null) {
+      return const SizedBox();
+    }
     return Padding(
       padding: const EdgeInsets.all(2),
       child: IconButton(

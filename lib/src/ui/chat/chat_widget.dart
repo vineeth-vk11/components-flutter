@@ -8,8 +8,8 @@ import '../../context/room.dart';
 import '../../types/theme.dart';
 import 'data_chip.dart';
 
-class Chat extends StatelessWidget {
-  const Chat({super.key});
+class ChatWidget extends StatelessWidget {
+  const ChatWidget({super.key});
 
   List<Widget> _buildMessages(List<ChatMessage> messages) {
     List<Widget> msgWidgets = [];

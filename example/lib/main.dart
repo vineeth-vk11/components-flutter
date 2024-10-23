@@ -76,18 +76,24 @@ class MyHomePage extends StatelessWidget {
         return Consumer<RoomContext>(
           builder: (context, roomCtx, child) => Scaffold(
             body: !roomCtx.connected && !roomCtx.connecting
+
+                /// show prejoin screen if not connected
                 ? Prejoin(
                     onJoinPressed: (name, roomName) =>
                         _onJoinPressed(roomCtx, name, roomName),
                   )
-                : Row(
+                :
+
+                /// show room screen if connected
+                Row(
                     children: [
+                      /// show chat widget on mobile
                       (deviceScreenType == DeviceScreenType.mobile &&
                               roomCtx.isChatEnabled)
                           ? const Expanded(
                               child: Padding(
                                 padding: EdgeInsets.only(top: 50),
-                                child: Chat(),
+                                child: ChatWidget(),
                               ),
                             )
                           : Expanded(
@@ -96,32 +102,69 @@ class MyHomePage extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
                                   Expanded(
+                                    /// show participant loop
                                     child: ParticipantLoop(
+                                      showAudioTracks: false,
+                                      showVideoTracks: true,
+
+                                      /// layout builder
                                       layoutBuilder:
                                           roomCtx.focusedTrackSid != null
                                               ? const CarouselLayoutBuilder()
                                               : const GridLayoutBuilder(),
-                                      participantBuilder: (context) =>
-                                          const Padding(
-                                        padding: EdgeInsets.all(2.0),
-                                        child: ParticipantTile(
-                                          showSpeakingIndicator: true,
-                                        ),
-                                      ),
+
+                                      /// participant builder
+                                      participantBuilder: (context) {
+                                        // build participant widget for each Track
+                                        return Padding(
+                                          padding: const EdgeInsets.all(2.0),
+                                          child: IsSpeakingIndicator(
+                                            builder: (BuildContext context) =>
+                                                const Stack(
+                                              children: [
+                                                /// video track widget in the background
+                                                VideoTrackWidget(),
+
+                                                /// TODO: Add AudioTrackWidget or AgentVisualizerWidget later
+
+                                                /// focus toggle button at the top right
+                                                Positioned(
+                                                  top: 0,
+                                                  right: 0,
+                                                  child: FocusToggle(),
+                                                ),
+
+                                                /// track stats at the bottom right
+                                                Positioned(
+                                                  bottom: 30,
+                                                  right: 0,
+                                                  child: TrackStatsWidget(),
+                                                ),
+
+                                                /// status bar at the bottom
+                                                ParticipantStatusBar(),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      },
                                     ),
                                   ),
-                                  /// show control bar
+
+                                  /// show control bar at the bottom
                                   const ControlBar(),
                                 ],
                               ),
                             ),
+
+                      /// show chat widget on desktop
                       (deviceScreenType != DeviceScreenType.mobile &&
                               roomCtx.isChatEnabled)
                           ? const Expanded(
                               flex: 2,
                               child: SizedBox(
                                 width: 400,
-                                child: Chat(),
+                                child: ChatWidget(),
                               ),
                             )
                           : const SizedBox(width: 0, height: 0),

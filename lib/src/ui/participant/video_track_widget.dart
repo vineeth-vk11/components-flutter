@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../../context/track.dart';
 import '../debug/logger.dart';
-import 'no_video_widgets.dart';
+import 'no_video_widget.dart';
 
 class VideoTrackWidget extends StatelessWidget {
   const VideoTrackWidget({
