@@ -14,8 +14,7 @@ dependencies:
   flutter_background: ^1.3.0+1
   google_fonts: ^6.2.1
   http: ^1.2.2
-  livekit_client:
-    path: ../client-sdk-flutter
+  livekit_client: ^2.2.8
   provider: ^6.1.2
   responsive_builder: ^0.7.1
 
