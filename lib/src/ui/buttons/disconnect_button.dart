@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:livekit_client/livekit_client.dart';
 
+import 'package:livekit_client/livekit_client.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
 import '../../context/room.dart';
 
-class LeaveButton extends StatelessWidget {
-  const LeaveButton({super.key});
+class DisconnectButton extends StatelessWidget {
+  const DisconnectButton({super.key, this.title = 'Leave'});
+
+  final String title;
 
   @override
   Widget build(BuildContext context) {
@@ -44,9 +46,9 @@ class LeaveButton extends StatelessWidget {
                 const Icon(Icons.logout),
                 const SizedBox(width: 2),
                 if (deviceScreenType != DeviceScreenType.mobile)
-                  const Text(
-                    'Leave',
-                    style: TextStyle(fontSize: 14),
+                  Text(
+                    title,
+                    style: const TextStyle(fontSize: 14),
                   ),
               ],
             ),

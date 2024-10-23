@@ -101,12 +101,16 @@ class MyHomePage extends StatelessWidget {
                                           roomCtx.focusedTrackSid != null
                                               ? const CarouselLayoutBuilder()
                                               : const GridLayoutBuilder(),
-                                      builder: (context) => const Padding(
+                                      participantBuilder: (context) =>
+                                          const Padding(
                                         padding: EdgeInsets.all(2.0),
-                                        child: ParticipantTile(),
+                                        child: ParticipantTile(
+                                          showSpeakingIndicator: true,
+                                        ),
                                       ),
                                     ),
                                   ),
+                                  /// show control bar
                                   const ControlBar(),
                                 ],
                               ),

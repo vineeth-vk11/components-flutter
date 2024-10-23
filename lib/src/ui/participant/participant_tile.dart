@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 
-import 'package:livekit_client/livekit_client.dart';
 import 'package:provider/provider.dart';
 
-import '../../context/room.dart';
 import '../../context/track.dart';
-
 import '../debug/logger.dart';
-import 'focus_button.dart';
+import '../debug/track_stats.dart';
+import 'focus_toggle.dart';
 import 'is_speaking_indicator.dart';
 import 'no_video_widgets.dart';
 import 'participant_status_bar.dart';
+import 'video_track_widgets.dart';
 
 typedef SpeakingIndicatorBuilder = Widget Function(
     BuildContext context, Widget child);
@@ -25,7 +24,6 @@ class ParticipantTile extends StatelessWidget {
 
   Widget buildContent(BuildContext context, TrackContext? trackCtx) {
     var trackCtx = Provider.of<TrackContext?>(context);
-    var isScreenShare = trackCtx?.isScreenShare ?? false;
     var trackSid = trackCtx?.sid ?? '';
     return Stack(
       children: [
@@ -34,21 +32,23 @@ class ParticipantTile extends StatelessWidget {
             selector: (context, isMuted) => trackCtx.isMuted,
             builder: (BuildContext context, isMuted, child) =>
                 !isMuted && trackCtx.videoTrack != null
-                    ? VideoTrackRenderer(trackCtx.videoTrack!)
-                    : NoVideoWidget(sid: trackSid),
+                    ? VideoTrackWidget(key: ValueKey(trackSid))
+                    : const NoVideoWidget(),
           ),
-        if (trackCtx == null) NoVideoWidget(sid: trackSid),
+        if (trackCtx == null) const NoVideoWidget(),
         if (trackCtx != null)
-          Positioned(
+          const Positioned(
             top: 0,
             right: 0,
-            child: FocusButton(sid: trackSid),
+            child: FocusToggle(),
           ),
-        ParticipantStatusBar(
-          showMuteStatus: !isScreenShare,
-          isScreenShare: isScreenShare,
-          showE2EEStatus: !isScreenShare,
-        ),
+        if (trackCtx != null)
+          const Positioned(
+            bottom: 30,
+            right: 0,
+            child: TrackStatsWidget(),
+          ),
+        const ParticipantStatusBar(),
       ],
     );
   }
@@ -63,6 +63,11 @@ class ParticipantTile extends StatelessWidget {
         builder: (context) => buildContent(context, trackCtx),
       );
     }
-    return buildContent(context, trackCtx);
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+      ),
+      child: buildContent(context, trackCtx),
+    );
   }
 }

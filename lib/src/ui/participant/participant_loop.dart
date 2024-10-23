@@ -6,28 +6,24 @@ import 'package:provider/provider.dart';
 import '../../context/participant.dart';
 import '../../context/room.dart';
 import '../../context/track.dart';
-import '../layout/layouts.dart';
 import '../debug/logger.dart';
+import '../layout/grid_layout.dart';
+import '../layout/layouts.dart';
 
 class ParticipantLoop extends StatelessWidget {
-  ParticipantLoop({
+  const ParticipantLoop({
     super.key,
-    required this.builder,
+    required this.participantBuilder,
     this.layoutBuilder = const GridLayoutBuilder(),
-    this.showAudio = false,
-    this.showVideo = true,
+    this.showAudioTracks = false,
+    this.showVideoTracks = true,
   });
 
-  final WidgetBuilder builder;
+  final WidgetBuilder participantBuilder;
   final ParticipantLayoutBuilder layoutBuilder;
 
-  final List<ParticipantLayoutBuilder> layoutBuilders = [
-    const GridLayoutBuilder(),
-    const CarouselLayoutBuilder(),
-  ];
-
-  final bool showAudio;
-  final bool showVideo;
+  final bool showAudioTracks;
+  final bool showVideoTracks;
 
   @override
   Widget build(BuildContext context) {
@@ -47,10 +43,10 @@ class ParticipantLoop extends StatelessWidget {
                 index++;
                 var tracks = participant.trackPublications.values;
                 for (var track in tracks) {
-                  if (track.kind == TrackType.AUDIO && !showAudio) {
+                  if (track.kind == TrackType.AUDIO && !showAudioTracks) {
                     continue;
                   }
-                  if (track.kind == TrackType.VIDEO && !showVideo) {
+                  if (track.kind == TrackType.VIDEO && !showVideoTracks) {
                     continue;
                   }
                   trackWidgets[track.sid] = MultiProvider(
@@ -64,22 +60,22 @@ class ParticipantLoop extends StatelessWidget {
                         create: (_) => TrackContext(participant, pub: track),
                       ),
                     ],
-                    child: builder(context),
+                    child: participantBuilder(context),
                   );
 
                   Debug.log(
                       '=>  ${track.source.toString()} track ${track.sid} for ${participant.identity}');
                 }
 
-                if (!showAudio &&
+                if (!showAudioTracks &&
                         !tracks.any((t) => t.kind == TrackType.VIDEO) ||
-                    !showVideo &&
+                    !showVideoTracks &&
                         tracks.any((t) => t.kind == TrackType.AUDIO) ||
                     tracks.isEmpty) {
                   trackWidgets[participant.identity] = ChangeNotifierProvider(
                     key: ValueKey(participant.identity),
                     create: (_) => ParticipantContext(participant),
-                    child: builder(context),
+                    child: participantBuilder(context),
                   );
 
                   Debug.log('=>  no tracks for ${participant.identity}');
@@ -87,6 +83,7 @@ class ParticipantLoop extends StatelessWidget {
               }
               var children = trackWidgets.values.toList();
 
+              /// Move focused track to the front
               var focused = trackWidgets.entries
                   .where((e) => e.key == roomCtx.focusedTrackSid)
                   .firstOrNull;

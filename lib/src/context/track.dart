@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+
 import 'package:livekit_client/livekit_client.dart';
+
 import 'package:livekit_components/src/ui/debug/logger.dart';
 
 class TrackContext extends ChangeNotifier {
@@ -34,6 +36,9 @@ class TrackContext extends ChangeNotifier {
   void dispose() {
     super.dispose();
     _listener.dispose();
+    if (_statsListener != null) {
+      _statsListener!.dispose();
+    }
   }
 
   final Participant _participant;
@@ -51,5 +56,119 @@ class TrackContext extends ChangeNotifier {
 
   bool get isScreenShare => pub?.source == TrackSource.screenShareVideo;
 
+  bool get isVideo => pub?.kind == TrackType.VIDEO;
+
   String get sid => pub?.sid ?? '';
+
+  bool _showStatistics = false;
+
+  bool get showStatistics => _showStatistics;
+
+  set showStatistics(bool value) {
+    if (_showStatistics != value) {
+      _showStatistics = value;
+      if (_showStatistics) {
+        if (pub!.track != null) {
+          _setUpListener(pub!.track as Track);
+        }
+      } else {
+        if (_statsListener != null) {
+          _statsListener!.dispose();
+        }
+        _stats = {};
+      }
+      notifyListeners();
+    }
+  }
+
+  Map<String, String> _stats = {};
+  Map<String, String> get stats => _stats;
+  EventsListener<TrackEvent>? _statsListener;
+
+  void _setUpListener(Track track) {
+    if (_statsListener != null) {
+      _statsListener!.dispose();
+    }
+
+    _statsListener = track.createListener();
+
+    if (track is LocalVideoTrack) {
+      _statsListener?.on<VideoSenderStatsEvent>((event) {
+        Map<String, String> stats = {};
+        stats['tx'] = 'total sent ${event.currentBitrate.toInt()} kpbs';
+        event.stats.forEach((key, value) {
+          stats['layer-$key'] =
+              '${value.frameWidth ?? 0}x${value.frameHeight ?? 0} ${value.framesPerSecond?.toDouble() ?? 0} fps, ${event.bitrateForLayers[key] ?? 0} kbps';
+        });
+        var firstStats =
+            event.stats['f'] ?? event.stats['h'] ?? event.stats['q'];
+        if (firstStats != null) {
+          stats['encoder'] = firstStats.encoderImplementation ?? '';
+          if (firstStats.mimeType != null) {
+            stats['codec'] =
+                '${firstStats.mimeType!.split('/')[1]}/${firstStats.clockRate}';
+          }
+          stats['payload'] = '${firstStats.payloadType}';
+          stats['qualityLimitationReason'] =
+              firstStats.qualityLimitationReason ?? '';
+        }
+
+        _stats = stats;
+        notifyListeners();
+      });
+    } else if (track is RemoteVideoTrack) {
+      _statsListener?.on<VideoReceiverStatsEvent>((event) {
+        Map<String, String> stats = {};
+        stats['rx'] = '${event.currentBitrate.toInt()} kpbs';
+        if (event.stats.mimeType != null) {
+          stats['codec'] =
+              '${event.stats.mimeType!.split('/')[1]}/${event.stats.clockRate}';
+        }
+        stats['payload'] = '${event.stats.payloadType}';
+        stats['size/fps'] =
+            '${event.stats.frameWidth}x${event.stats.frameHeight} ${event.stats.framesPerSecond?.toDouble()}fps';
+        stats['jitter'] = '${event.stats.jitter} s';
+        stats['decoder'] = '${event.stats.decoderImplementation}';
+        //stats['video packets lost'] = '${event.stats.packetsLost}';
+        //stats['video packets received'] = '${event.stats.packetsReceived}';
+        stats['frames received'] = '${event.stats.framesReceived}';
+        stats['frames decoded'] = '${event.stats.framesDecoded}';
+        stats['frames dropped'] = '${event.stats.framesDropped}';
+
+        _stats = stats;
+        notifyListeners();
+      });
+    } else if (track is LocalAudioTrack) {
+      _statsListener?.on<AudioSenderStatsEvent>((event) {
+        Map<String, String> stats = {};
+        stats['tx'] = '${event.currentBitrate.toInt()} kpbs';
+        if (event.stats.mimeType != null) {
+          stats['codec'] =
+              '${event.stats.mimeType!.split('/')[1]}/${event.stats.clockRate}/${event.stats.channels}';
+        }
+        stats['payload'] = '${event.stats.payloadType}';
+        _stats = stats;
+        notifyListeners();
+      });
+    } else if (track is RemoteAudioTrack) {
+      _statsListener?.on<AudioReceiverStatsEvent>((event) {
+        Map<String, String> stats = {};
+
+        stats['rx'] = '${event.currentBitrate.toInt()} kpbs';
+        if (event.stats.mimeType != null) {
+          stats['codec'] =
+              '${event.stats.mimeType!.split('/')[1]}/${event.stats.clockRate}/${event.stats.channels}';
+        }
+        stats['payload'] = '${event.stats.payloadType}';
+        stats['jitter'] = '${event.stats.jitter} s';
+        //stats['concealed samples'] =
+        //    '${event.stats.concealedSamples} / ${event.stats.concealmentEvents}';
+        stats['packets lost'] = '${event.stats.packetsLost}';
+        stats['packets received'] = '${event.stats.packetsReceived}';
+
+        _stats = stats;
+        notifyListeners();
+      });
+    }
+  }
 }

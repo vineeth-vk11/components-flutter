@@ -1,19 +1,22 @@
 import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
+import 'package:provider/provider.dart';
+
+import '../../context/track.dart';
 import '../../types/theme.dart';
 import '../debug/logger.dart';
 
 class NoVideoWidget extends StatelessWidget {
   const NoVideoWidget({
     super.key,
-    required this.sid,
   });
-
-  final String? sid;
 
   @override
   Widget build(BuildContext context) {
+    var trackCtx = Provider.of<TrackContext?>(context);
+    final String? sid = trackCtx?.sid;
     Debug.log('===>     NoVideoWidget for $sid');
     return Center(
       child: LayoutBuilder(

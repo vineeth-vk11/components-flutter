@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:livekit_components/src/ui/debug/logger.dart';
 
 import 'package:provider/provider.dart';
 
+import 'package:livekit_components/src/ui/debug/logger.dart';
 import '../../context/room.dart';
+import '../../context/track.dart';
 
-class FocusButton extends StatelessWidget {
-  const FocusButton({
+class FocusToggle extends StatelessWidget {
+  const FocusToggle({
     super.key,
-    required this.sid,
   });
 
-  final String? sid;
   @override
   Widget build(BuildContext context) {
     final roomCtx = context.read<RoomContext>();
+    var trackCtx = Provider.of<TrackContext?>(context);
+    final String? sid = trackCtx?.sid;
     Debug.log('===>     FocusButton for $sid');
     return Padding(
       padding: const EdgeInsets.all(2),

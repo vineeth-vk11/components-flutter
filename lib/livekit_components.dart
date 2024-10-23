@@ -1,9 +1,11 @@
+library livekit_components;
+
 export 'src/context/room.dart';
 export 'src/context/participant.dart';
 export 'src/context/permission.dart';
+export 'src/context/track.dart';
 export 'src/types/theme.dart';
 export 'src/types/types.dart';
-export 'src/ui/room/camera_preview.dart';
 export 'src/ui/buttons/camera_select_button.dart';
 export 'src/ui/buttons/microphone_select_button.dart';
 export 'src/ui/buttons/audio_output_select_button.dart';
@@ -17,6 +19,8 @@ export 'src/ui/participant/participant_tile.dart';
 export 'src/ui/participant/participant_loop.dart';
 export 'src/ui/participant/is_speaking_indicator.dart';
 export 'src/ui/participant/participant_status_bar.dart';
-export 'src/context/track.dart';
+export 'src/ui/prejoin/prejoin.dart';
+export 'src/ui/prejoin/camera_preview.dart';
 export 'src/ui/layout/layouts.dart';
-export 'src/ui/prejoin.dart';
+export 'src/ui/layout/grid_layout.dart';
+export 'src/ui/layout/garousel_ayout.dart';

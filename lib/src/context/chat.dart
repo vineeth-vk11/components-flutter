@@ -61,7 +61,7 @@ mixin ChatContextMixin on ChangeNotifier {
     if (listener != null) {
       _listener!.on<DataReceivedEvent>((event) {
         Debug.event('ChatContext: DataReceivedEvent');
-        
+
         if (event.topic == 'lk-chat-topic') {
           addMessageFromMap(
               const Utf8Decoder().convert(event.data), event.participant);
