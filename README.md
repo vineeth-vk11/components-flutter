@@ -71,7 +71,7 @@ class MyApp extends StatelessWidget {
 
                       /// participant builder
                       participantBuilder: (context) {
-                        // build participant widget for each Track
+                        /// build participant widget for each Track
                         return const ParticipantTileWidget();
                       },
                     ),
