@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
-import 'package:livekit_components/src/ui/debug/logger.dart';
 import '../../context/room.dart';
 import '../../context/track.dart';
+import '../debug/logger.dart';
 
 class FocusToggle extends StatelessWidget {
   const FocusToggle({

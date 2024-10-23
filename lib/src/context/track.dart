@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:livekit_client/livekit_client.dart';
 
-import 'package:livekit_components/src/ui/debug/logger.dart';
+import '../ui/debug/logger.dart';
 
 class TrackContext extends ChangeNotifier {
   TrackContext(

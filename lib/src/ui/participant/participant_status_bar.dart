@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
-import 'package:livekit_components/src/ui/debug/logger.dart';
 import '../../context/participant.dart';
 import '../../context/track.dart';
+import '../debug/logger.dart';
 import 'connection_quality_indicator.dart';
 import 'e2e_encryption_indicator.dart';
 import 'participant_muted_indicator.dart';
