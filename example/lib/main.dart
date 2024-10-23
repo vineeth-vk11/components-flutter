@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:livekit_components/livekit_components.dart';
-import 'package:provider/provider.dart';
 import 'package:logging/logging.dart';
 import 'package:intl/intl.dart';
 import 'package:responsive_builder/responsive_builder.dart';
@@ -67,121 +66,116 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return LivekitRoom(
       roomContext: RoomContext(),
-      builder: (context) {
+      builder: (context, roomCtx) {
         var deviceScreenType = getDeviceType(MediaQuery.of(context).size);
-        return Consumer<RoomContext>(
-          builder: (context, roomCtx, child) => Scaffold(
-            body: Stack(
-              children: [
-                !roomCtx.connected && !roomCtx.connecting
+        return Scaffold(
+          body: Stack(
+            children: [
+              !roomCtx.connected && !roomCtx.connecting
 
-                    /// show prejoin screen if not connected
-                    ? Prejoin(
-                        token: token,
-                        url: url,
-                        //onJoinPressed: _onJoinPressed,
-                      )
-                    :
+                  /// show prejoin screen if not connected
+                  ? Prejoin(
+                      token: token,
+                      url: url,
+                      //onJoinPressed: _onJoinPressed,
+                    )
+                  :
 
-                    /// show room screen if connected
-                    Row(
-                        children: [
-                          /// show chat widget on mobile
-                          (deviceScreenType == DeviceScreenType.mobile &&
-                                  roomCtx.isChatEnabled)
-                              ? const Expanded(
-                                  child: Padding(
-                                    padding: EdgeInsets.only(top: 50),
-                                    child: ChatWidget(),
-                                  ),
-                                )
-                              : Expanded(
-                                  flex: 5,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Expanded(
-                                        /// show participant loop
-                                        child: ParticipantLoop(
-                                          showAudioTracks: false,
-                                          showVideoTracks: true,
-
-                                          /// layout builder
-                                          layoutBuilder: roomCtx
-                                                      .focusedTrackSid !=
-                                                  null
-                                              ? const CarouselLayoutBuilder()
-                                              : const GridLayoutBuilder(),
-
-                                          /// participant builder
-                                          participantBuilder: (context) {
-                                            // build participant widget for each Track
-                                            return Padding(
-                                              padding:
-                                                  const EdgeInsets.all(2.0),
-                                              child: IsSpeakingIndicator(
-                                                builder:
-                                                    (BuildContext context) =>
-                                                        const Stack(
-                                                  children: [
-                                                    /// video track widget in the background
-                                                    VideoTrackWidget(),
-
-                                                    /// TODO: Add AudioTrackWidget or AgentVisualizerWidget later
-
-                                                    /// focus toggle button at the top right
-                                                    Positioned(
-                                                      top: 0,
-                                                      right: 0,
-                                                      child: FocusToggle(),
-                                                    ),
-
-                                                    /// track stats at the bottom right
-                                                    Positioned(
-                                                      bottom: 30,
-                                                      right: 0,
-                                                      child: TrackStatsWidget(),
-                                                    ),
-
-                                                    /// status bar at the bottom
-                                                    ParticipantStatusBar(),
-                                                  ],
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ),
-
-                                      /// show control bar at the bottom
-                                      const ControlBar(),
-                                    ],
-                                  ),
+                  /// show room screen if connected
+                  Row(
+                      children: [
+                        /// show chat widget on mobile
+                        (deviceScreenType == DeviceScreenType.mobile &&
+                                roomCtx.isChatEnabled)
+                            ? const Expanded(
+                                child: Padding(
+                                  padding: EdgeInsets.only(top: 50),
+                                  child: ChatWidget(),
                                 ),
+                              )
+                            : Expanded(
+                                flex: 5,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Expanded(
+                                      /// show participant loop
+                                      child: ParticipantLoop(
+                                        showAudioTracks: false,
+                                        showVideoTracks: true,
 
-                          /// show chat widget on desktop
-                          (deviceScreenType != DeviceScreenType.mobile &&
-                                  roomCtx.isChatEnabled)
-                              ? const Expanded(
-                                  flex: 2,
-                                  child: SizedBox(
-                                    width: 400,
-                                    child: ChatWidget(),
-                                  ),
-                                )
-                              : const SizedBox(width: 0, height: 0),
-                        ],
-                      ),
+                                        /// layout builder
+                                        layoutBuilder:
+                                            roomCtx.focusedTrackSid != null
+                                                ? const CarouselLayoutBuilder()
+                                                : const GridLayoutBuilder(),
 
-                /// show toast widget
-                const Positioned(
-                  top: 30,
-                  left: 0,
-                  right: 0,
-                  child: ToastWidget(),
-                ),
-              ],
-            ),
+                                        /// participant builder
+                                        participantBuilder: (context) {
+                                          // build participant widget for each Track
+                                          return Padding(
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: IsSpeakingIndicator(
+                                              builder: (BuildContext context) =>
+                                                  const Stack(
+                                                children: [
+                                                  /// video track widget in the background
+                                                  VideoTrackWidget(),
+
+                                                  /// TODO: Add AudioTrackWidget or AgentVisualizerWidget later
+
+                                                  /// focus toggle button at the top right
+                                                  Positioned(
+                                                    top: 0,
+                                                    right: 0,
+                                                    child: FocusToggle(),
+                                                  ),
+
+                                                  /// track stats at the bottom right
+                                                  Positioned(
+                                                    bottom: 30,
+                                                    right: 0,
+                                                    child: TrackStatsWidget(),
+                                                  ),
+
+                                                  /// status bar at the bottom
+                                                  ParticipantStatusBar(),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+
+                                    /// show control bar at the bottom
+                                    const ControlBar(),
+                                  ],
+                                ),
+                              ),
+
+                        /// show chat widget on desktop
+                        (deviceScreenType != DeviceScreenType.mobile &&
+                                roomCtx.isChatEnabled)
+                            ? const Expanded(
+                                flex: 2,
+                                child: SizedBox(
+                                  width: 400,
+                                  child: ChatWidget(),
+                                ),
+                              )
+                            : const SizedBox(width: 0, height: 0),
+                      ],
+                    ),
+
+              /// show toast widget
+              const Positioned(
+                top: 30,
+                left: 0,
+                right: 0,
+                child: ToastWidget(),
+              ),
+            ],
           ),
         );
       },

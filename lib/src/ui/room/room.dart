@@ -4,18 +4,23 @@ import 'package:provider/provider.dart';
 
 import '../../context/room.dart';
 
+typedef RoomContextBuilder = Widget Function(
+    BuildContext context, RoomContext roomCtx);
+
 class LivekitRoom extends StatelessWidget {
   const LivekitRoom(
       {super.key, required this.roomContext, required this.builder});
 
   final RoomContext roomContext;
-  final WidgetBuilder builder;
+  final RoomContextBuilder builder;
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => roomContext,
-      child: builder(context),
+      child: Consumer<RoomContext>(
+        builder: (context, roomCtx, child) => builder(context, roomCtx),
+      ),
     );
   }
 }

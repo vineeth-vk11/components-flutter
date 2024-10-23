@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
         token: 'your room token',
         connect: true,
       ),
-      builder: (context) {
+      builder: (context, roomCtx) {
         return MaterialApp(
           theme: LiveKitTheme().buildThemeData(context),
           home: Scaffold(
