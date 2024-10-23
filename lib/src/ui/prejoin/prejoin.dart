@@ -5,28 +5,42 @@ import '../../context/room.dart';
 import '../buttons/camera_select_button.dart';
 import '../buttons/join_button.dart';
 import '../buttons/microphone_select_button.dart';
+import '../debug/logger.dart';
 import 'camera_preview.dart';
 import 'text_input.dart';
 
 class Prejoin extends StatelessWidget {
-  Prejoin({super.key, required this.onJoinPressed});
+  Prejoin(
+      {super.key, required this.token, required this.url, this.onJoinPressed});
 
-  final Function(String, String) onJoinPressed;
+  final Function(RoomContext roomCtx, String url, String token)? onJoinPressed;
 
-  String _name = '';
+  String token;
 
-  String _roomName = 'livekit-room';
+  String url;
 
-  void onTextNameChanged(String name) async {
-    _name = name;
+  void onTextTokenChanged(String token) async {
+    token = token;
   }
 
-  void onTextRoomNameChanged(String roomName) async {
-    _roomName = roomName;
+  void onTextUrlChanged(String url) async {
+    url = url;
   }
 
-  void _handleJoinPressed(BuildContext context) {
-    onJoinPressed(_name, _roomName);
+  void _handleJoinPressed(RoomContext roomCtx) async {
+    if (onJoinPressed == null) {
+      Debug.event('Joining room: $url');
+      try {
+        await roomCtx.connect(
+          url: url,
+          token: token,
+        );
+      } catch (e) {
+        Debug.event('Failed to join room: $e');
+      }
+      return;
+    }
+    onJoinPressed?.call(roomCtx, url, token);
   }
 
   @override
@@ -70,9 +84,9 @@ class Prejoin extends StatelessWidget {
                             child: Container(
                               padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
                               child: TextInput(
-                                onTextChanged: onTextRoomNameChanged,
-                                hintText: 'Enter room name',
-                                text: _roomName,
+                                onTextChanged: onTextUrlChanged,
+                                hintText: 'Enter Livekit Server URL',
+                                text: url,
                               ),
                             ),
                           ),
@@ -81,8 +95,9 @@ class Prejoin extends StatelessWidget {
                             child: Container(
                               padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
                               child: TextInput(
-                                onTextChanged: onTextNameChanged,
-                                hintText: 'Enter your name',
+                                onTextChanged: onTextTokenChanged,
+                                hintText: 'Enter Token',
+                                text: token,
                               ),
                             ),
                           ),
@@ -92,7 +107,7 @@ class Prejoin extends StatelessWidget {
                             child: Container(
                               padding: const EdgeInsets.all(8.0),
                               child: JoinButton(
-                                onPressed: () => _handleJoinPressed(context),
+                                onPressed: () => _handleJoinPressed(roomCtx),
                               ),
                             ),
                           ),

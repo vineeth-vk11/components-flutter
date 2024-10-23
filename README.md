@@ -14,6 +14,79 @@
 Use this SDK to add realtime video, audio and data features to your Flutter app. By connecting to <a href="https://livekit.io/">LiveKit</a> Cloud or a self-hosted server, you can quickly build applications such as multi-modal AI, live streaming, or video calls with just a few lines of code.
 <!--END_DESCRIPTION-->
 
+## Installation
+
+Add the following to your `pubspec.yaml`:
+
+```yaml
+dependencies:
+  livekit_components: ^0.1.0
+```
+
+## Usage
+
+Here is a simple example of how to use the components in your Flutter app:
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:livekit_components/livekit_components.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return LivekitRoom(
+      roomContext: RoomContext(
+        url: 'your room url',
+        token: 'your room token',
+        connect: true,
+      ),
+      builder: (context) {
+        return MaterialApp(
+          theme: LiveKitTheme().buildThemeData(context),
+          home: Scaffold(
+            appBar: AppBar(
+              title: const Text('LiveKit Components Sample'),
+            ),
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Expanded(
+                    /// show participant loop
+                    child: ParticipantLoop(
+                      showAudioTracks: false,
+                      showVideoTracks: true,
+
+                      /// layout builder
+                      layoutBuilder: const GridLayoutBuilder(),
+
+                      /// participant builder
+                      participantBuilder: (context) {
+                        // build participant widget for each Track
+                        return const ParticipantTileWidget();
+                      },
+                    ),
+                  ),
+
+                  /// show control bar at the bottom
+                  const ControlBar(),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+```
+
 <!--BEGIN_REPO_NAV-->
 <br/><table>
 <thead><tr><th colspan="2">LiveKit Ecosystem</th></tr></thead>

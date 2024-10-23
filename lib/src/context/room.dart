@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart' hide ConnectionState;
 
 import 'package:livekit_client/livekit_client.dart';
@@ -94,12 +96,9 @@ class RoomContext extends ChangeNotifier with ChatContextMixin, FToastMixin {
       });
 
     if (connect && url != null && token != null) {
-      this.connect(
-        url: url,
-        token: token,
-      );
       _url = url;
       _token = token;
+      this.connect(url: url, token: token);
     }
   }
 

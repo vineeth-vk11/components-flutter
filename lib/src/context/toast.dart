@@ -4,11 +4,25 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
+import '../types/types.dart';
+
 mixin FToastMixin {
-  final FToast fToast = FToast();
+  FToast? fToast;
+
+  void initFToast() {
+    if (fToastNavigatorKey.currentContext != null) {
+      fToast = FToast();
+      fToast?.init(fToastNavigatorKey.currentContext!);
+    }
+  }
+
+  void deinitFToast() {
+    fToast?.removeQueuedCustomToasts();
+    fToast = null;
+  }
 
   void showConnectionStateToast(ConnectionState connectionState) {
-    fToast.showToast(
+    fToast?.showToast(
       child: toast(connectionState),
       gravity: ToastGravity.TOP,
       toastDuration: const Duration(seconds: 2),

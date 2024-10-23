@@ -20,12 +20,13 @@ class LivekitRoomState extends State<LivekitRoom> {
   @override
   void initState() {
     super.initState();
-    widget.roomContext.fToast.init(fToastNavigatorKey.currentContext!);
+
+    widget.roomContext.initFToast();
   }
 
   @override
   void dispose() {
-    widget.roomContext.fToast.removeQueuedCustomToasts();
+    widget.roomContext.deinitFToast();
     super.dispose();
   }
 

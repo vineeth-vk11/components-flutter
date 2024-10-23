@@ -7,6 +7,8 @@ import 'package:intl/intl.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
+import 'src/utils.dart';
+
 void main() {
   final format = DateFormat('HH:mm:ss');
   // configure logs for debugging
@@ -48,14 +50,15 @@ class MyHomePage extends StatelessWidget {
   final token =
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzEzNjkzNjgsImlzcyI6IkFQSXJramtRYVZRSjVERSIsIm5hbWUiOiJmbHQiLCJuYmYiOjE3Mjk1NjkzNjgsInN1YiI6ImZsdCIsInZpZGVvIjp7InJvb20iOiJsaXZlIiwicm9vbUpvaW4iOnRydWV9fQ.HVjMK_t00FlF24xIn-IZot1ROeb6JjV8QstRf2577yw';
 
+  /// handle join button pressed, fetch connection details and connect to room.
   void _onJoinPressed(RoomContext roomCtx, String name, String roomName) async {
     if (kDebugMode) {
-      print('Joining room $roomName as $name');
+      print('Joining room: name=$name, roomName=$roomName');
     }
     try {
-      //final details = await fetchConnectionDetails(name, roomName);
-      //await roomCtx.connect(
-      //    url: details.serverUrl, token: details.participantToken);
+      final details = await fetchConnectionDetails(name, roomName);
+      await roomCtx.connect(
+          url: details.serverUrl, token: details.participantToken);
       await roomCtx.connect(
         url: url,
         token: token,
@@ -79,8 +82,9 @@ class MyHomePage extends StatelessWidget {
 
                 /// show prejoin screen if not connected
                 ? Prejoin(
-                    onJoinPressed: (name, roomName) =>
-                        _onJoinPressed(roomCtx, name, roomName),
+                    token: token,
+                    url: url,
+                    //onJoinPressed: _onJoinPressed,
                   )
                 :
 
