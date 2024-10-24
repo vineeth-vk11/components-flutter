@@ -10,7 +10,7 @@ flowchart TD
     B --> D1[ChatWidget]
     B --> D2[ControlBar]
     B --> C1[ParticipantLoop]
-    C1 --> C2[ParticipantContext]
+    C1 --> C2[ParticipantContext/TrackContext?]
     style C2 fill:#f9f
     C2 --> H[ParticipantWidget]
     H --> |loop for partcipant| C1
