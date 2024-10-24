@@ -5,7 +5,7 @@ import 'package:flutter/material.dart' hide ConnectionState;
 import 'package:livekit_client/livekit_client.dart';
 import 'package:provider/provider.dart';
 
-import '../ui/debug/logger.dart';
+import '../debug/logger.dart';
 import 'chat_context.dart';
 
 class RoomContext extends ChangeNotifier with ChatContextMixin {
@@ -21,6 +21,13 @@ class RoomContext extends ChangeNotifier with ChatContextMixin {
     return Provider.of<RoomContext?>(context);
   }
 
+  /// Create a new [RoomContext] with the given [url] and [token].
+  /// If [connect] is true, the room will be connected immediately.
+  /// If [room] is provided, it will be used instead of creating a new room.
+  /// If [connectOptions] is provided, it will be used to connect to the room.
+  /// If [roomOptions] is provided, it will be used to create a new room.
+  /// If [room] is not provided, a new room will be created with the given [roomOptions].
+  /// If [url] and [token] are not provided, they must be provided when calling [Room.connect].
   RoomContext({
     String? url,
     String? token,
@@ -43,7 +50,7 @@ class RoomContext extends ChangeNotifier with ChatContextMixin {
         _roomMetadata = event.room.metadata;
         _activeRecording = event.room.isRecording;
         _roomName = event.room.name;
-        sortParticipants();
+        _sortParticipants();
         notifyListeners();
       })
       ..on<RoomDisconnectedEvent>((event) {
@@ -76,16 +83,10 @@ class RoomContext extends ChangeNotifier with ChatContextMixin {
         _activeRecording = event.activeRecording;
         notifyListeners();
       })
-      ..on<ParticipantNameUpdatedEvent>((event) {
-        Debug.event(
-            'RoomContext: ParticipantNameUpdatedEvent name = ${event.name}');
-        _roomName = event.name;
-        notifyListeners();
-      })
       ..on<ParticipantConnectedEvent>((event) {
         Debug.event(
             'RoomContext: ParticipantConnectedEvent participant = ${event.participant.identity}');
-        sortParticipants();
+        _sortParticipants();
       })
       ..on<ParticipantDisconnectedEvent>((event) {
         Debug.event(
@@ -96,21 +97,21 @@ class RoomContext extends ChangeNotifier with ChatContextMixin {
       })
       ..on<TrackPublishedEvent>((event) {
         Debug.event('ParticipantContext: TrackPublishedEvent');
-        sortParticipants();
+        _sortParticipants();
       })
       ..on<TrackUnpublishedEvent>((event) {
         Debug.event('ParticipantContext: TrackUnpublishedEvent');
-        sortParticipants();
+        _sortParticipants();
       })
       ..on<LocalTrackPublishedEvent>((event) {
         Debug.event(
             'RoomContext: LocalTrackPublishedEvent track = ${event.publication.sid}');
-        sortParticipants();
+        _sortParticipants();
       })
       ..on<LocalTrackUnpublishedEvent>((event) {
         Debug.event(
             'RoomContext: LocalTrackUnpublishedEvent track = ${event.publication.sid}');
-        sortParticipants();
+        _sortParticipants();
       });
 
     if (connect && url != null && token != null) {
@@ -120,54 +121,7 @@ class RoomContext extends ChangeNotifier with ChatContextMixin {
     }
   }
 
-  final ConnectOptions? _connectOptions;
-  FastConnectOptions? _fastConnectOptions;
-  late EventsListener<RoomEvent> _listener;
-
-  String? _url;
-  String? _token;
-  late Room _room;
-
-  Room get room => _room;
-
-  String? _roomName;
-  String? get roomName => _roomName;
-
-  String? _roomMetadata;
-  String? get roomMetadata => _roomMetadata;
-
-  bool _activeRecording = false;
-  bool get activeRecording => _activeRecording;
-
-  ConnectionState _connectionState = ConnectionState.disconnected;
-  ConnectionState get connectionState => _connectionState;
-
-  bool _connecting = false;
-  bool get connecting => _connecting;
-
-  bool _connected = false;
-  bool get connected => _connected;
-
-  int get participantCount => _participants.length;
-
-  final List<Participant> _participants = [];
-  List<Participant> get participants => _participants;
-
-  void sortParticipants() {
-    _participants.clear();
-
-    if (!connected) {
-      return;
-    }
-
-    if (_room.localParticipant != null) {
-      _participants.add(_room.localParticipant!);
-    }
-
-    _participants.addAll(_room.remoteParticipants.values);
-    notifyListeners();
-  }
-
+  ///  Connect to the room with the given [url] and [token].
   Future<void> connect({
     String? url,
     String? token,
@@ -204,6 +158,69 @@ class RoomContext extends ChangeNotifier with ChatContextMixin {
 
   Future<void> disconnect() async {
     await _room.disconnect();
+    notifyListeners();
+  }
+
+  final ConnectOptions? _connectOptions;
+  FastConnectOptions? _fastConnectOptions;
+  late EventsListener<RoomEvent> _listener;
+
+  String? _url;
+  String? _token;
+  late Room _room;
+
+  /// Get the [Room] instance.
+  Room get room => _room;
+
+  String? _roomName;
+
+  /// Get the room name.
+  String? get roomName => _roomName;
+
+  String? _roomMetadata;
+
+  /// Get the room metadata.
+  String? get roomMetadata => _roomMetadata;
+
+  bool _activeRecording = false;
+
+  /// Get the active recording status.
+  bool get activeRecording => _activeRecording;
+
+  ConnectionState _connectionState = ConnectionState.disconnected;
+
+  /// Get the connection state.
+  ConnectionState get connectionState => _connectionState;
+
+  bool _connecting = false;
+
+  /// Get the connecting status.
+  bool get connecting => _connecting;
+
+  bool _connected = false;
+
+  /// Get the connected status.
+  bool get connected => _connected;
+
+  int get participantCount => _participants.length;
+
+  final List<Participant> _participants = [];
+
+  /// Get the list of participants.
+  List<Participant> get participants => _participants;
+
+  void _sortParticipants() {
+    _participants.clear();
+
+    if (!connected) {
+      return;
+    }
+
+    if (_room.localParticipant != null) {
+      _participants.add(_room.localParticipant!);
+    }
+
+    _participants.addAll(_room.remoteParticipants.values);
     notifyListeners();
   }
 

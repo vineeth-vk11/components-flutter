@@ -88,10 +88,22 @@ class MyHomePage extends StatelessWidget {
                         /// show chat widget on mobile
                         (deviceScreenType == DeviceScreenType.mobile &&
                                 roomCtx.isChatEnabled)
-                            ? const Expanded(
+                            ? Expanded(
                                 child: Padding(
-                                  padding: EdgeInsets.only(top: 50),
-                                  child: ChatWidget(),
+                                  padding: const EdgeInsets.only(top: 50),
+                                  child: ChatBuilder(
+                                    builder:
+                                        (context, enabled, chatCtx, messages) {
+                                      return ChatWidget(
+                                        messages: messages,
+                                        onSend: (message) =>
+                                            chatCtx.sendMessage(message),
+                                        onClose: () {
+                                          chatCtx.disableChat();
+                                        },
+                                      );
+                                    },
+                                  ),
                                 ),
                               )
                             : Expanded(
@@ -116,33 +128,41 @@ class MyHomePage extends StatelessWidget {
                                           // build participant widget for each Track
                                           return Padding(
                                             padding: const EdgeInsets.all(2.0),
-                                            child: IsSpeakingIndicator(
-                                              builder: (BuildContext context) =>
-                                                  const Stack(
-                                                children: [
-                                                  /// video track widget in the background
-                                                  VideoTrackWidget(),
+                                            child: Stack(
+                                              children: [
+                                                /// video track widget in the background
 
-                                                  /// TODO: Add AudioTrackWidget or AgentVisualizerWidget later
+                                                IsSpeakingIndicator(builder:
+                                                    (context, isSpeaking) {
+                                                  return isSpeaking != null
+                                                      ? IsSpeakingIndicatorWidget(
+                                                          isSpeaking:
+                                                              isSpeaking,
+                                                          child:
+                                                              const VideoTrackWidget(),
+                                                        )
+                                                      : const VideoTrackWidget();
+                                                }),
 
-                                                  /// focus toggle button at the top right
-                                                  Positioned(
-                                                    top: 0,
-                                                    right: 0,
-                                                    child: FocusToggle(),
-                                                  ),
+                                                /// TODO: Add AudioTrackWidget or AgentVisualizerWidget later
 
-                                                  /// track stats at the bottom right
-                                                  Positioned(
-                                                    bottom: 30,
-                                                    right: 0,
-                                                    child: TrackStatsWidget(),
-                                                  ),
+                                                /// focus toggle button at the top right
+                                                const Positioned(
+                                                  top: 0,
+                                                  right: 0,
+                                                  child: FocusToggle(),
+                                                ),
 
-                                                  /// status bar at the bottom
-                                                  ParticipantStatusBar(),
-                                                ],
-                                              ),
+                                                /// track stats at the bottom right
+                                                const Positioned(
+                                                  bottom: 30,
+                                                  right: 0,
+                                                  child: TrackStatsWidget(),
+                                                ),
+
+                                                /// status bar at the bottom
+                                                const ParticipantStatusBar(),
+                                              ],
                                             ),
                                           );
                                         },
@@ -158,11 +178,23 @@ class MyHomePage extends StatelessWidget {
                         /// show chat widget on desktop
                         (deviceScreenType != DeviceScreenType.mobile &&
                                 roomCtx.isChatEnabled)
-                            ? const Expanded(
+                            ? Expanded(
                                 flex: 2,
                                 child: SizedBox(
                                   width: 400,
-                                  child: ChatWidget(),
+                                  child: ChatBuilder(
+                                    builder:
+                                        (context, enabled, chatCtx, messages) {
+                                      return ChatWidget(
+                                        messages: messages,
+                                        onSend: (message) =>
+                                            chatCtx.sendMessage(message),
+                                        onClose: () {
+                                          chatCtx.disableChat();
+                                        },
+                                      );
+                                    },
+                                  ),
                                 ),
                               )
                             : const SizedBox(width: 0, height: 0),

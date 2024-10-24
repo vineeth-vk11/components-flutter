@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../context/room_context.dart';
-import '../builder/media_device.dart';
-import '../buttons/camera_select_button.dart';
-import '../buttons/join_button.dart';
-import '../buttons/microphone_select_button.dart';
-import '../debug/logger.dart';
-import 'camera_preview.dart';
+import '../../debug/logger.dart';
+import '../builder/camera_preview.dart';
+import '../builder/join_button.dart';
+import '../widgets/camera_preview.dart';
+import '../widgets/camera_select_button.dart';
+import '../widgets/join_button.dart';
+import '../widgets/microphone_select_button.dart';
 import 'text_input.dart';
 
 class Prejoin extends StatelessWidget {
@@ -61,27 +62,23 @@ class Prejoin extends StatelessWidget {
                         children: <Widget>[
                           Container(
                             padding: const EdgeInsets.all(8.0),
-                            child: const CameraPreview(),
+                            child: CameraPreview(
+                              builder: (context, videoTrack) =>
+                                  CameraPreviewWidget(track: videoTrack),
+                            ),
                           ),
-                          MediaDevices(
-                            builder: (_, mediaDeviceCtx) => SizedBox(
-                              width: 360,
-                              child: Container(
+                          SizedBox(
+                            width: 360,
+                            child: Container(
                                 padding: const EdgeInsets.all(8.0),
-                                child: const Row(
+                                child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    MicrophoneSelectButton(
-                                      showLabel: true,
-                                    ),
-                                    CameraSelectButton(
-                                      showLabel: true,
-                                    ),
+                                    MicrophoneSelectButton(),
+                                    CameraSelectButton(),
                                   ],
-                                ),
-                              ),
-                            ),
+                                )),
                           ),
                           SizedBox(
                             width: 360,
@@ -111,7 +108,12 @@ class Prejoin extends StatelessWidget {
                             child: Container(
                               padding: const EdgeInsets.all(8.0),
                               child: JoinButton(
-                                onPressed: () => _handleJoinPressed(roomCtx),
+                                builder: (context, roomCtx, connected) =>
+                                    JoinButtonWidget(
+                                  roomCtx: roomCtx,
+                                  connected: connected,
+                                  onPressed: () => _handleJoinPressed(roomCtx),
+                                ),
                               ),
                             ),
                           ),

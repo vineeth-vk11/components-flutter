@@ -5,13 +5,11 @@ import 'package:provider/provider.dart';
 import '../../context/media_device_context.dart';
 import '../../context/room_context.dart';
 
-typedef MediaDevicesBuilder = Widget Function(
-    BuildContext context, MediaDeviceContext mediaDeviceContext);
+class MediaDeviceContextBuilder extends StatelessWidget {
+  const MediaDeviceContextBuilder({super.key, required this.builder});
 
-class MediaDevices extends StatelessWidget {
-  const MediaDevices({super.key, required this.builder});
-
-  final MediaDevicesBuilder builder;
+  final Widget Function(BuildContext context, RoomContext roomContext,
+      MediaDeviceContext mediaDeviceContext) builder;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +18,7 @@ class MediaDevices extends StatelessWidget {
         create: (_) => MediaDeviceContext(roomCtx: roomCtx),
         child: Consumer<MediaDeviceContext>(
           builder: (context, mediaDeviceCtx, child) =>
-              builder(context, mediaDeviceCtx),
+              builder(context, roomCtx, mediaDeviceCtx),
         ),
       ),
     );

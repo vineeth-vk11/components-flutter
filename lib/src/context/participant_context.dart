@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:provider/provider.dart';
 
-import '../ui/debug/logger.dart';
+import '../debug/logger.dart';
 
 class ParticipantContext extends ChangeNotifier {
   static int createCount = 0;
@@ -68,6 +68,8 @@ class ParticipantContext extends ChangeNotifier {
         for (var seg in e.segments) {
           Debug.log('Transcription: ${seg.text} ${seg.isFinal}');
         }
+        _segments = e.segments;
+        notifyListeners();
       })
       ..on<ParticipantAttributesChanged>((event) {
         Debug.event(
@@ -138,4 +140,7 @@ class ParticipantContext extends ChangeNotifier {
 
   Map<String, String> _attributes = {};
   Map<String, String> get attributes => _attributes;
+
+  List<TranscriptionSegment> _segments = [];
+  List<TranscriptionSegment> get segments => _segments;
 }

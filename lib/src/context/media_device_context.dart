@@ -7,7 +7,7 @@ import 'package:flutter_webrtc/flutter_webrtc.dart' as rtc;
 import 'package:livekit_client/livekit_client.dart';
 import 'package:provider/provider.dart';
 
-import '../ui/debug/logger.dart';
+import '../debug/logger.dart';
 import 'room_context.dart';
 
 class MediaDeviceContext extends ChangeNotifier {

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:livekit_client/livekit_client.dart';
 
-import '../ui/debug/logger.dart';
+import '../debug/logger.dart';
 
 // topic: lk-chat-topic
 class ChatMessage {
