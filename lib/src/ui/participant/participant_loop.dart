@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:provider/provider.dart';
 
-import '../../context/participant.dart';
-import '../../context/room.dart';
-import '../../context/track.dart';
+import '../../context/participant_context.dart';
+import '../../context/room_context.dart';
+import '../../context/track_context.dart';
 import '../debug/logger.dart';
 import '../layout/grid_layout.dart';
 import '../layout/layouts.dart';

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:provider/provider.dart';
 
-import '../../context/participant.dart';
+import '../../context/participant_context.dart';
 import '../debug/logger.dart';
 
 class ConnectionQualityIndicator extends StatelessWidget {

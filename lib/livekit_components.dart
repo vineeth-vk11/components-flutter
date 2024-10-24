@@ -1,8 +1,8 @@
 library livekit_components;
 
-export 'src/context/room.dart';
-export 'src/context/participant.dart';
-export 'src/context/track.dart';
+export 'src/context/room_context.dart';
+export 'src/context/participant_context.dart';
+export 'src/context/track_context.dart';
 export 'src/ui/debug/track_stats_widget.dart';
 export 'src/types/theme.dart';
 export 'src/types/types.dart';
@@ -13,9 +13,9 @@ export 'src/ui/buttons/chat_toggle.dart';
 export 'src/ui/buttons/join_button.dart';
 export 'src/ui/buttons/screenshare_toggle.dart';
 export 'src/ui/chat/chat_widget.dart';
-export 'src/ui/room/room.dart';
-export 'src/ui/room/toast.dart';
-export 'src/ui/room/control_bar.dart';
+export 'src/ui/builder/room.dart';
+export 'src/ui/builder/toast.dart';
+export 'src/ui/builder/control_bar.dart';
 export 'src/ui/participant/participant_tile_widget.dart';
 export 'src/ui/participant/participant_loop.dart';
 export 'src/ui/participant/is_speaking_indicator.dart';

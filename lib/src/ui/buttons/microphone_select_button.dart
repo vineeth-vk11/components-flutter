@@ -4,8 +4,8 @@ import 'package:livekit_client/livekit_client.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
-import '../../context/media_device.dart';
-import '../../context/room.dart';
+import '../../context/media_device_context.dart';
+import '../../context/room_context.dart';
 import '../../types/theme.dart';
 
 class MicrophoneSelectButton extends StatelessWidget {

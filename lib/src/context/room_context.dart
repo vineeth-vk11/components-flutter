@@ -6,7 +6,7 @@ import 'package:livekit_client/livekit_client.dart';
 import 'package:provider/provider.dart';
 
 import '../ui/debug/logger.dart';
-import 'chat.dart';
+import 'chat_context.dart';
 
 class RoomContext extends ChangeNotifier with ChatContextMixin {
   /// Get the [RoomContext] from the [context].

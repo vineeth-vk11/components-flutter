@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:chat_bubbles/chat_bubbles.dart';
 import 'package:provider/provider.dart';
 
-import '../../context/chat.dart';
-import '../../context/room.dart';
+import '../../context/chat_context.dart';
+import '../../context/room_context.dart';
 import '../../types/theme.dart';
 import 'data_chip.dart';
 

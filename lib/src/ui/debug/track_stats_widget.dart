@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
-import '../../context/room.dart';
-import '../../context/track.dart';
+import '../../context/room_context.dart';
+import '../../context/track_context.dart';
 
 class TrackStatsWidget extends StatelessWidget {
   const TrackStatsWidget({Key? key}) : super(key: key);

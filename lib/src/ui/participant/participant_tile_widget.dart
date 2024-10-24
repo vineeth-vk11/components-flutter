@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
-import '../../context/track.dart';
+import '../../context/track_context.dart';
 import '../debug/logger.dart';
 import '../debug/track_stats_widget.dart';
 import 'focus_toggle.dart';

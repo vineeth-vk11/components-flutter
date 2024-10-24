@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:provider/provider.dart';
 
-import '../../context/track.dart';
+import '../../context/track_context.dart';
 import '../debug/logger.dart';
 import 'no_track_widget.dart';
 

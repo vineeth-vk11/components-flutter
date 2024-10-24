@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:provider/provider.dart';
 
-import '../../context/media_device.dart';
-import '../../context/room.dart';
+import '../../context/room_context.dart';
 import '../buttons/audio_output_select_button.dart';
 import '../buttons/camera_select_button.dart';
 import '../buttons/chat_toggle.dart';
 import '../buttons/disconnect_button.dart';
 import '../buttons/microphone_select_button.dart';
 import '../buttons/screenshare_toggle.dart';
+import 'media_device.dart';
 
 class ControlBar extends StatelessWidget {
   const ControlBar({
@@ -42,9 +42,8 @@ class ControlBar extends StatelessWidget {
       ),
       child: Consumer<RoomContext>(
         builder: (context, roomCtx, child) {
-          return ChangeNotifierProvider(
-            create: (_) => MediaDeviceContext(roomCtx: roomCtx),
-            child: Wrap(
+          return MediaDevices(
+            builder: (context, mediaDeviceCtx) => Wrap(
               alignment: WrapAlignment.center,
               spacing: 6,
               runSpacing: 6,

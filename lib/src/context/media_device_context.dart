@@ -8,7 +8,7 @@ import 'package:livekit_client/livekit_client.dart';
 import 'package:provider/provider.dart';
 
 import '../ui/debug/logger.dart';
-import 'room.dart';
+import 'room_context.dart';
 
 class MediaDeviceContext extends ChangeNotifier {
   /// Get the [MediaDeviceContext] from the [context].
@@ -106,8 +106,8 @@ class MediaDeviceContext extends ChangeNotifier {
           deviceId: device.deviceId,
         ),
       );
-      selectedVideoInputDeviceId = device.deviceId;
     }
+    selectedVideoInputDeviceId = device.deviceId;
     notifyListeners();
   }
 
