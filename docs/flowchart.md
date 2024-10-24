@@ -4,7 +4,7 @@
 
 ```mermaid
 flowchart TD
-    A[LivekitRoom] --> B[LivekitRoomContext]
+    A[LivekitRoom] --> B[RoomContext]
     style B fill:#f9f
     B --> D0[Prejoin]
     B --> D1[ChatWidget]
@@ -23,7 +23,7 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-A[ControlBar] --> B[LivekitRoomContext]
+A[ControlBar] --> B[RoomContext]
 style B fill:#f9f
 B --> D[MediaDeviceContext]
 style D fill:#f9f
@@ -40,7 +40,7 @@ B --> C1[DisconnectButton]
 
 ```mermaid
 flowchart TD
-A[PrejoinWidget] --> B[LivekitRoomContext]
+A[PrejoinWidget] --> B[RoomContext]
 style B fill:#f9f
 B --> C[CameraPreview]
 B --> D[MediaDeviceContext]
