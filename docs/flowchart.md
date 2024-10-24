@@ -13,7 +13,7 @@ flowchart TD
     C1 --> C2[ParticipantContext/TrackContext?]
     style C2 fill:#f9f
     C2 --> H[ParticipantWidget]
-    H --> |loop for partcipant| C1
+    H --> |loop for create partcipant widget| C1
     H --> |partcipant widgets| I[LayoutBuilder]
     I --> J[GridLayoutBuilder]
     I --> K[CarouselLayoutBuilder]
@@ -60,10 +60,14 @@ flowchart TD
 A[ParticipantWidget] --> B[ParticipantContext]
 style B fill:#f9f
 B --> C[IsSpeakingIndicator]
-C --> D1[AudioTrackWidget]
-C --> D2[VideoTrackWidget]
+C --> C1[TrackContext?]
+style C1 fill:#f9f
+C1 --> D1[AudioTrackWidget]
+C1 --> D2[VideoTrackWidget]
 B --> D3[FocusToggle]
-B --> D4[TrackStatsWidget]
+B --> B1[TrackContext?]
+style B1 fill:#f9f
+B1 --> D4[TrackStatsWidget]
 B --> D5[ParticipantStatusBar]
 D2 --> F[NoTrackWidget]
 D5 --> G1[ParticipantMutedIndicator]
