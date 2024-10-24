@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
-import '../../context/media_device_context.dart';
 import '../../context/room_context.dart';
+import '../builder/media_device.dart';
 import '../buttons/camera_select_button.dart';
 import '../buttons/join_button.dart';
 import '../buttons/microphone_select_button.dart';
 import '../debug/logger.dart';
-import '../builder/media_device.dart';
 import 'camera_preview.dart';
 import 'text_input.dart';
 
