@@ -21,7 +21,9 @@ Use this SDK to add realtime video, audio and data features to your Flutter app.
 
 LiveKit component state management is based on [provider](https://pub.dev/packages/provider), including `RoomContext`, `MediaDeviceContext`, `ParticipantContext`, `TrackContext`, and `ChatContext`. You can render components in the corresponding Context, such as `Chat`, `ParticipantLoop`, `ControlBar`, `StatusBar`, `AudioTrack`, `VideoTrack`, `Toggle Buttons`.
 
-Please refer to the [flowchart](./docs/flowchart.md) for the widgets topology structure
+You can create video conferencing, live streaming, or AI Agents applications with minimal lines of code.
+
+Please refer to the [flowchart](./docs/flowchart.md) for the widgets topology structure.
 
 ## Installation
 
