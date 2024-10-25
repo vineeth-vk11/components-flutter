@@ -8,12 +8,16 @@ class GridLayoutBuilder implements ParticipantLayoutBuilder {
   const GridLayoutBuilder();
 
   @override
-  Widget build(BuildContext context, List<Widget> children) {
+  Widget build(
+      BuildContext context, List<Widget> children, List<Widget>? pinned) {
     var deviceScreenType = getDeviceType(MediaQuery.of(context).size);
     return GridView.count(
       crossAxisCount: deviceScreenType == DeviceScreenType.mobile ? 2 : 4,
       childAspectRatio: 1.5,
-      children: children,
+      children: [
+        if (pinned != null) ...pinned,
+        ...children,
+      ],
     );
   }
 }

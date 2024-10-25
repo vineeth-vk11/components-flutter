@@ -1,6 +1,6 @@
 name: livekit_components
 description: "Out-of-the-box flutter widgets for livekit client."
-version: 0.0.1
+version: 1.0.0
 homepage: https://github.com/livekit/components-flutter
 
 environment:

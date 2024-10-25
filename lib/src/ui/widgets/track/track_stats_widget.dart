@@ -11,9 +11,9 @@ class TrackStatsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var trackCtx = Provider.of<TrackReferenceContext?>(context);
-    var roomCtx = Provider.of<RoomContext?>(context);
+    var roomCtx = Provider.of<RoomContext>(context);
 
-    if (trackCtx == null || roomCtx?.focusedTrackSid != trackCtx.sid) {
+    if (trackCtx == null || !roomCtx.pinnedTracks.contains(trackCtx.sid)) {
       return const SizedBox();
     }
 

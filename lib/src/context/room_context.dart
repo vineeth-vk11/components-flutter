@@ -50,7 +50,7 @@ class RoomContext extends ChangeNotifier with ChatContextMixin {
         _roomMetadata = event.room.metadata;
         _activeRecording = event.room.isRecording;
         _roomName = event.room.name;
-        _sortParticipants();
+        _buildParticipants();
         notifyListeners();
       })
       ..on<RoomDisconnectedEvent>((event) {
@@ -86,7 +86,7 @@ class RoomContext extends ChangeNotifier with ChatContextMixin {
       ..on<ParticipantConnectedEvent>((event) {
         Debug.event(
             'RoomContext: ParticipantConnectedEvent participant = ${event.participant.identity}');
-        _sortParticipants();
+        _buildParticipants();
       })
       ..on<ParticipantDisconnectedEvent>((event) {
         Debug.event(
@@ -97,21 +97,21 @@ class RoomContext extends ChangeNotifier with ChatContextMixin {
       })
       ..on<TrackPublishedEvent>((event) {
         Debug.event('ParticipantContext: TrackPublishedEvent');
-        _sortParticipants();
+        _buildParticipants();
       })
       ..on<TrackUnpublishedEvent>((event) {
         Debug.event('ParticipantContext: TrackUnpublishedEvent');
-        _sortParticipants();
+        _buildParticipants();
       })
       ..on<LocalTrackPublishedEvent>((event) {
         Debug.event(
             'RoomContext: LocalTrackPublishedEvent track = ${event.publication.sid}');
-        _sortParticipants();
+        _buildParticipants();
       })
       ..on<LocalTrackUnpublishedEvent>((event) {
         Debug.event(
             'RoomContext: LocalTrackUnpublishedEvent track = ${event.publication.sid}');
-        _sortParticipants();
+        _buildParticipants();
       });
 
     if (connect && url != null && token != null) {
@@ -209,7 +209,7 @@ class RoomContext extends ChangeNotifier with ChatContextMixin {
   /// Get the list of participants.
   List<Participant> get participants => _participants;
 
-  void _sortParticipants() {
+  void _buildParticipants() {
     _participants.clear();
 
     if (!connected) {
@@ -224,14 +224,28 @@ class RoomContext extends ChangeNotifier with ChatContextMixin {
     notifyListeners();
   }
 
-  void setFocusedTrack(String? sid) {
-    _focusedTrackSid = sid;
-    Debug.log('Focused track: $sid');
+  void pinningTrack(String sid) {
+    _pinnedTrackSid.remove(sid);
+    _pinnedTrackSid.insert(0, sid);
+    Debug.event('Pinning track: $sid');
     notifyListeners();
   }
 
-  String? _focusedTrackSid;
-  String? get focusedTrackSid => _focusedTrackSid;
+  void unpinningTrack(String sid) {
+    _pinnedTrackSid.remove(sid);
+    Debug.event('Unpinning track: $sid');
+    notifyListeners();
+  }
+
+  void clearPinnedTracks() {
+    _pinnedTrackSid.clear();
+    notifyListeners();
+  }
+
+  final List<String> _pinnedTrackSid = [];
+  List<String> get pinnedTracks => _pinnedTrackSid;
+
+  bool get isPinnedTracksEmpty => _pinnedTrackSid.isEmpty;
 
   LocalVideoTrack? _localVideoTrack;
 

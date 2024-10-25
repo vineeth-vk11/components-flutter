@@ -47,6 +47,11 @@ class ChatWidget extends StatelessWidget {
     return msgWidgets;
   }
 
+  void scrollToBottom() {
+    _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -94,18 +99,12 @@ class ChatWidget extends StatelessWidget {
               replyWidgetColor: LKColors.lkDarkBlue,
               onSend: (msg) {
                 onSend(msg);
-                _scrollController.animateTo(
-                    _scrollController.position.maxScrollExtent,
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeOut);
+                scrollToBottom();
               },
               onTextChanged: (msg) {
                 if (msg.isNotEmpty && msg.codeUnits.last == 10) {
                   onSend(msg.substring(0, msg.length - 1));
-                  _scrollController.animateTo(
-                      _scrollController.position.maxScrollExtent,
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeOut);
+                  scrollToBottom();
                 }
               },
             ),

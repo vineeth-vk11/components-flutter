@@ -3,27 +3,62 @@ import 'package:flutter/material.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:provider/provider.dart';
 
-import '../../../context/participant_context.dart';
 import '../../../context/room_context.dart';
-import '../../../context/track_reference_context.dart';
 import '../../../debug/logger.dart';
 import '../../layout/grid_layout.dart';
 import '../../layout/layouts.dart';
+import 'participant_track.dart';
 
 class ParticipantLoop extends StatelessWidget {
   const ParticipantLoop({
     super.key,
     required this.participantBuilder,
     this.layoutBuilder = const GridLayoutBuilder(),
+    this.sorting,
     this.showAudioTracks = false,
     this.showVideoTracks = true,
   });
 
   final WidgetBuilder participantBuilder;
+  final Map<Participant, TrackPublication?> Function(
+      Map<Participant, TrackPublication?> tracks)? sorting;
   final ParticipantLayoutBuilder layoutBuilder;
 
   final bool showAudioTracks;
   final bool showVideoTracks;
+
+  Map<Participant, TrackPublication?> buildTracksMap(
+      bool audio, bool video, List<Participant> participants) {
+    final Map<Participant, TrackPublication?> trackMap = {};
+    int index = 0;
+    for (Participant participant in participants) {
+      Debug.log('=>  participant ${participant.identity}, index: $index');
+      index++;
+      var tracks = participant.trackPublications.values;
+      for (var track in tracks) {
+        if (track.kind == TrackType.AUDIO && !audio) {
+          continue;
+        }
+        if (track.kind == TrackType.VIDEO && !video) {
+          continue;
+        }
+        trackMap[participant] = track;
+
+        Debug.log(
+            '=>  ${track.source.toString()} track ${track.sid} for ${participant.identity}');
+      }
+
+      if (!audio && !tracks.any((t) => t.kind == TrackType.VIDEO) ||
+          !video && tracks.any((t) => t.kind == TrackType.AUDIO) ||
+          tracks.isEmpty) {
+        trackMap[participant] = null;
+
+        Debug.log('=>  no tracks for ${participant.identity}');
+      }
+    }
+
+    return trackMap;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,65 +70,53 @@ class ParticipantLoop extends StatelessWidget {
             shouldRebuild: (previous, next) => previous.length != next.length,
             builder: (context, participants, child) {
               var roomCtx = Provider.of<RoomContext>(context);
-              final Map<String, Widget> trackWidgets = {};
-              int index = 0;
-              for (Participant participant in participants) {
-                Debug.log(
-                    '=>  participant ${participant.identity}, index: $index');
-                index++;
-                var tracks = participant.trackPublications.values;
-                for (var track in tracks) {
-                  if (track.kind == TrackType.AUDIO && !showAudioTracks) {
-                    continue;
-                  }
-                  if (track.kind == TrackType.VIDEO && !showVideoTracks) {
-                    continue;
-                  }
-                  trackWidgets[track.sid] = MultiProvider(
-                    providers: [
-                      ChangeNotifierProvider(
-                        key: ValueKey(track.sid),
-                        create: (_) => ParticipantContext(participant),
-                      ),
-                      ChangeNotifierProvider(
-                        key: ValueKey(track.sid),
-                        create: (_) =>
-                            TrackReferenceContext(participant, pub: track),
-                      ),
-                    ],
-                    child: participantBuilder(context),
+
+              Map<String, Widget> trackWidgets = {};
+
+              var trackMap = buildTracksMap(
+                  showAudioTracks, showVideoTracks, participants);
+
+              if (sorting != null) {
+                trackMap = sorting!(trackMap);
+              }
+
+              for (var item in trackMap.entries) {
+                var participant = item.key;
+                var track = item.value;
+                if (track == null) {
+                  trackWidgets[participant.identity] = ParticipantTrack(
+                    participant: participant,
+                    builder: (context) => participantBuilder(context),
                   );
-
-                  Debug.log(
-                      '=>  ${track.source.toString()} track ${track.sid} for ${participant.identity}');
-                }
-
-                if (!showAudioTracks &&
-                        !tracks.any((t) => t.kind == TrackType.VIDEO) ||
-                    !showVideoTracks &&
-                        tracks.any((t) => t.kind == TrackType.AUDIO) ||
-                    tracks.isEmpty) {
-                  trackWidgets[participant.identity] = ChangeNotifierProvider(
-                    key: ValueKey(participant.identity),
-                    create: (_) => ParticipantContext(participant),
-                    child: participantBuilder(context),
+                } else {
+                  trackWidgets[track.sid] = ParticipantTrack(
+                    participant: participant,
+                    track: track,
+                    builder: (context) => participantBuilder(context),
                   );
-
-                  Debug.log('=>  no tracks for ${participant.identity}');
                 }
               }
+
               var children = trackWidgets.values.toList();
+              List<Widget> pinned = [];
 
-              /// Move focused track to the front
-              var focused = trackWidgets.entries
-                  .where((e) => e.key == roomCtx.focusedTrackSid)
-                  .firstOrNull;
+              /// Move focused tracks to the pinned list
+              var focused = roomCtx.pinnedTracks
+                  .map((e) {
+                    if (trackWidgets.containsKey(e)) {
+                      return trackWidgets[e]!;
+                    }
+                    return null;
+                  })
+                  .whereType<Widget>()
+                  .toList();
 
-              if (focused != null) {
-                children.remove(focused.value);
-                children.insert(0, focused.value);
+              if (focused.isNotEmpty) {
+                children.removeWhere((e) => focused.contains(e));
+                pinned.addAll(focused);
               }
-              return layoutBuilder.build(context, children);
+
+              return layoutBuilder.build(context, children, pinned);
             });
       },
     );

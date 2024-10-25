@@ -20,22 +20,23 @@ class FocusToggle extends StatelessWidget {
     if (trackCtx == null) {
       return const SizedBox();
     }
+    var showBackToGridView =
+        roomCtx.pinnedTracks.contains(sid) && sid == roomCtx.pinnedTracks.first;
+
     return Padding(
       padding: const EdgeInsets.all(2),
       child: IconButton(
-        icon: Icon(sid == roomCtx.focusedTrackSid
-            ? Icons.grid_view
-            : Icons.open_in_full),
+        icon: Icon(showBackToGridView ? Icons.grid_view : Icons.open_in_full),
         color: Colors.white70,
         onPressed: () {
           if (sid == null) {
             return;
           }
-          if (sid == roomCtx.focusedTrackSid) {
-            roomCtx.setFocusedTrack(null);
-            return;
+          if (showBackToGridView) {
+            roomCtx.clearPinnedTracks();
+          } else {
+            roomCtx.pinningTrack(sid);
           }
-          roomCtx.setFocusedTrack(sid);
         },
       ),
     );

@@ -89,21 +89,18 @@ class MyHomePage extends StatelessWidget {
                         (deviceScreenType == DeviceScreenType.mobile &&
                                 roomCtx.isChatEnabled)
                             ? Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(top: 50),
-                                  child: ChatBuilder(
-                                    builder:
-                                        (context, enabled, chatCtx, messages) {
-                                      return ChatWidget(
-                                        messages: messages,
-                                        onSend: (message) =>
-                                            chatCtx.sendMessage(message),
-                                        onClose: () {
-                                          chatCtx.disableChat();
-                                        },
-                                      );
-                                    },
-                                  ),
+                                child: ChatBuilder(
+                                  builder:
+                                      (context, enabled, chatCtx, messages) {
+                                    return ChatWidget(
+                                      messages: messages,
+                                      onSend: (message) =>
+                                          chatCtx.sendMessage(message),
+                                      onClose: () {
+                                        chatCtx.disableChat();
+                                      },
+                                    );
+                                  },
                                 ),
                               )
                             : Expanded(
@@ -119,9 +116,9 @@ class MyHomePage extends StatelessWidget {
 
                                         /// layout builder
                                         layoutBuilder:
-                                            roomCtx.focusedTrackSid != null
-                                                ? const CarouselLayoutBuilder()
-                                                : const GridLayoutBuilder(),
+                                            roomCtx.isPinnedTracksEmpty
+                                                ? const GridLayoutBuilder()
+                                                : const CarouselLayoutBuilder(),
 
                                         /// participant builder
                                         participantBuilder: (context) {
