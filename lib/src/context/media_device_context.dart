@@ -26,8 +26,6 @@ class MediaDeviceContext extends ChangeNotifier {
   final RoomContext _roomCtx;
   final Room? _room;
 
-  CameraPosition position = CameraPosition.front;
-
   List<MediaDevice>? _audioInputs;
   List<MediaDevice>? _audioOutputs;
   List<MediaDevice>? _videoInputs;
@@ -102,7 +100,7 @@ class MediaDeviceContext extends ChangeNotifier {
       await _roomCtx.localVideoTrack?.dispose();
       _roomCtx.localVideoTrack = await LocalVideoTrack.createCameraTrack(
         CameraCaptureOptions(
-          cameraPosition: position,
+          cameraPosition: currentPosition ?? CameraPosition.front,
           deviceId: device.deviceId,
         ),
       );
@@ -152,7 +150,7 @@ class MediaDeviceContext extends ChangeNotifier {
     } else {
       _roomCtx.localVideoTrack ??= await LocalVideoTrack.createCameraTrack(
         CameraCaptureOptions(
-          cameraPosition: position,
+          cameraPosition: currentPosition ?? CameraPosition.front,
           deviceId: selectedVideoInputDeviceId,
         ),
       );
@@ -262,6 +260,41 @@ class MediaDeviceContext extends ChangeNotifier {
 
   Future<void> disableScreenShare() async {
     await _room?.localParticipant?.setScreenShareEnabled(false);
+    notifyListeners();
+  }
+
+  bool get canSwitchSpeakerphone => Hardware.instance.canSwitchSpeakerphone;
+
+  bool? get isSpeakerOn => Hardware.instance.speakerOn;
+
+  void setSpeakerphoneOn(bool speakerOn) async {
+    if (lkPlatformIs(PlatformType.iOS)) {
+      if (!speakerOn && Hardware.instance.preferSpeakerOutput) {
+        await Hardware.instance.setPreferSpeakerOutput(false);
+      }
+    }
+    await Hardware.instance.setSpeakerphoneOn(speakerOn);
+    notifyListeners();
+  }
+
+  CameraPosition? get currentPosition {
+    final track =
+        _room?.localParticipant?.videoTrackPublications.firstOrNull?.track;
+    if (track == null) return null;
+    return (track.currentOptions as CameraCaptureOptions).cameraPosition;
+  }
+
+  void switchCamera(CameraPosition newPosition) async {
+    final track =
+        _room?.localParticipant?.videoTrackPublications.firstOrNull?.track;
+    if (track == null) return;
+
+    try {
+      await track.setCameraPosition(newPosition);
+    } catch (error) {
+      print('could not restart track: $error');
+      return;
+    }
     notifyListeners();
   }
 }

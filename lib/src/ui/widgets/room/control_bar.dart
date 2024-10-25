@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 
 import 'package:livekit_client/livekit_client.dart';
 
+import 'package:livekit_components/src/ui/builder/room/camera_switch.dart';
+import 'package:livekit_components/src/ui/widgets/room/speaker_switch_button.dart';
 import '../../builder/room/chat_toggle.dart';
 import '../../builder/room/disconnect_button.dart';
 import '../../builder/room/media_device_select_button.dart';
 import '../../builder/room/screenshare_toggle.dart';
+import '../../builder/room/speaker_switch.dart';
+import 'camera_switch_button.dart';
 import 'chat_toggle.dart';
 import 'disconnect_button.dart';
 import 'media_device_select_button.dart';
@@ -32,6 +36,8 @@ class ControlBar extends StatelessWidget {
   final bool leave;
   final bool settings;
   final bool showLabels;
+
+  bool get isMobile => lkPlatformIsMobile();
 
   @override
   Widget build(BuildContext context) {
@@ -92,6 +98,22 @@ class ControlBar extends StatelessWidget {
                 showLabel: showLabels,
               ),
             ),
+          if (isMobile && microphone)
+            SpeakerSwitch(
+                builder: (context, roomCtx, deviceCtx, isSpeakerOn) =>
+                    SpeakerSwitchButton(
+                      isSpeakerOn: isSpeakerOn ?? false,
+                      onToggle: (speakerOn) =>
+                          deviceCtx.setSpeakerphoneOn(speakerOn),
+                    )),
+          if (isMobile && camera)
+            CameraSwitch(
+                builder: (context, roomCtx, deviceCtx, position) =>
+                    CameraSwitchButton(
+                      currentPosition: position,
+                      onToggle: (newPosition) =>
+                          deviceCtx.switchCamera(newPosition),
+                    )),
           if (screenShare)
             ScreenShareToggle(
               builder: (context, roomCtx, deviceCtx, screenShareEnabled) =>
