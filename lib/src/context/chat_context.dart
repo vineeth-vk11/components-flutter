@@ -99,13 +99,8 @@ mixin ChatContextMixin on ChangeNotifier {
   bool _chatEnabled = false;
   bool get isChatEnabled => _chatEnabled;
 
-  void enableChat() {
-    _chatEnabled = true;
-    notifyListeners();
-  }
-
-  void disableChat() {
-    _chatEnabled = false;
+  void toggleChat(bool enabled) {
+    _chatEnabled = enabled;
     notifyListeners();
   }
 }

@@ -70,6 +70,14 @@ class MyHomePage extends StatelessWidget {
       builder: (context, roomCtx) {
         var deviceScreenType = getDeviceType(MediaQuery.of(context).size);
         return Scaffold(
+          appBar: AppBar(
+            title: const Text('LiveKit Components',
+                style: TextStyle(color: Colors.white)),
+            actions: [
+              /// show clear pin button
+              if (roomCtx.connected) const ClearPinButton(),
+            ],
+          ),
           body: Stack(
             children: [
               !roomCtx.connected && !roomCtx.connecting
@@ -97,7 +105,7 @@ class MyHomePage extends StatelessWidget {
                                       onSend: (message) =>
                                           chatCtx.sendMessage(message),
                                       onClose: () {
-                                        chatCtx.disableChat();
+                                        chatCtx.toggleChat(false);
                                       },
                                     );
                                   },
@@ -105,8 +113,7 @@ class MyHomePage extends StatelessWidget {
                               )
                             : Expanded(
                                 flex: 5,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                child: Stack(
                                   children: <Widget>[
                                     Expanded(
                                       /// show participant loop
@@ -152,8 +159,8 @@ class MyHomePage extends StatelessWidget {
 
                                                 /// track stats at the bottom right
                                                 const Positioned(
-                                                  bottom: 30,
-                                                  right: 0,
+                                                  top: 8,
+                                                  left: 0,
                                                   child: TrackStatsWidget(),
                                                 ),
 
@@ -167,7 +174,12 @@ class MyHomePage extends StatelessWidget {
                                     ),
 
                                     /// show control bar at the bottom
-                                    const ControlBar(),
+                                    const Positioned(
+                                      bottom: 30,
+                                      left: 0,
+                                      right: 0,
+                                      child: ControlBar(),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -187,7 +199,7 @@ class MyHomePage extends StatelessWidget {
                                         onSend: (message) =>
                                             chatCtx.sendMessage(message),
                                         onClose: () {
-                                          chatCtx.disableChat();
+                                          chatCtx.toggleChat(false);
                                         },
                                       );
                                     },

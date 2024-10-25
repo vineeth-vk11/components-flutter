@@ -29,13 +29,15 @@ class CarouselLayoutBuilder implements ParticipantLayoutBuilder {
     }
 
     var deviceScreenType = getDeviceType(MediaQuery.of(context).size);
-    if (deviceScreenType == DeviceScreenType.mobile) {
+    var orientation = MediaQuery.of(context).orientation;
+    var isMobile = deviceScreenType == DeviceScreenType.mobile;
+    if (isMobile && orientation == Orientation.portrait) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           if (children.length > 1)
             SizedBox(
-              height: 80,
+              height: 120,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: math.max(0, otherWidgets.length),
@@ -56,7 +58,7 @@ class CarouselLayoutBuilder implements ParticipantLayoutBuilder {
       children: [
         if (children.length > 1)
           SizedBox(
-            width: 180,
+            width: isMobile && orientation == Orientation.landscape ? 120 : 180,
             child: ListView.builder(
               scrollDirection: Axis.vertical,
               itemCount: math.max(0, otherWidgets.length),

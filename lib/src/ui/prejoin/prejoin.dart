@@ -75,8 +75,12 @@ class Prejoin extends StatelessWidget {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    MicrophoneSelectButton(),
-                                    CameraSelectButton(),
+                                    MicrophoneSelectButton(
+                                      showLabels: true,
+                                    ),
+                                    CameraSelectButton(
+                                      showLabels: true,
+                                    ),
                                   ],
                                 )),
                           ),

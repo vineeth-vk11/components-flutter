@@ -11,8 +11,12 @@ class GridLayoutBuilder implements ParticipantLayoutBuilder {
   Widget build(
       BuildContext context, List<Widget> children, List<Widget>? pinned) {
     var deviceScreenType = getDeviceType(MediaQuery.of(context).size);
+    var orientation = MediaQuery.of(context).orientation;
     return GridView.count(
-      crossAxisCount: deviceScreenType == DeviceScreenType.mobile ? 2 : 4,
+      crossAxisCount: deviceScreenType == DeviceScreenType.mobile &&
+              orientation == Orientation.portrait
+          ? 2
+          : 4,
       childAspectRatio: 1.5,
       children: [
         if (pinned != null) ...pinned,

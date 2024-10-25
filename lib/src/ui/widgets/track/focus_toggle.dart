@@ -9,7 +9,10 @@ import '../../../debug/logger.dart';
 class FocusToggle extends StatelessWidget {
   const FocusToggle({
     super.key,
+    this.showBackToGridView = false,
   });
+
+  final bool showBackToGridView;
 
   @override
   Widget build(BuildContext context) {
@@ -20,19 +23,24 @@ class FocusToggle extends StatelessWidget {
     if (trackCtx == null) {
       return const SizedBox();
     }
-    var showBackToGridView =
+    var shouldShowBackToGridView =
         roomCtx.pinnedTracks.contains(sid) && sid == roomCtx.pinnedTracks.first;
+
+    if (shouldShowBackToGridView && !showBackToGridView) {
+      return const SizedBox();
+    }
 
     return Padding(
       padding: const EdgeInsets.all(2),
       child: IconButton(
-        icon: Icon(showBackToGridView ? Icons.grid_view : Icons.open_in_full),
+        icon: Icon(
+            shouldShowBackToGridView ? Icons.grid_view : Icons.open_in_full),
         color: Colors.white70,
         onPressed: () {
           if (sid == null) {
             return;
           }
-          if (showBackToGridView) {
+          if (shouldShowBackToGridView) {
             roomCtx.clearPinnedTracks();
           } else {
             roomCtx.pinningTrack(sid);

@@ -106,8 +106,7 @@ class ControlBar extends StatelessWidget {
             ChatToggle(
               builder: (context, roomCtx, isChatEnabled) => ChatToggleWidget(
                 isChatOpen: roomCtx.isChatEnabled,
-                toggleChat: (enabled) =>
-                    enabled ? roomCtx.enableChat() : roomCtx.disableChat(),
+                toggleChat: (enabled) => roomCtx.toggleChat(enabled),
                 showLabel: showLabels,
               ),
             ),
