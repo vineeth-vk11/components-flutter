@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:chat_bubbles/chat_bubbles.dart';
 
 import '../../../context/chat_context.dart';
-import 'data_chip.dart';
 import '../theme.dart';
+import 'data_chip.dart';
 
 class ChatWidget extends StatelessWidget {
   ChatWidget({

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:provider/provider.dart';
 import 'package:livekit_client/livekit_client.dart' as lk;
+import 'package:provider/provider.dart';
 
 import '../../../context/participant_context.dart';
 import '../../../debug/logger.dart';

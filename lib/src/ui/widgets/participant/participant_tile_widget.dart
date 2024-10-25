@@ -6,10 +6,10 @@ import '../../../context/track_reference_context.dart';
 import '../../../debug/logger.dart';
 import '../../builder/track/is_speaking_indicator.dart';
 import '../track/focus_toggle.dart';
-import 'is_speaking_indicator.dart';
-import 'participant_status_bar.dart';
 import '../track/track_stats_widget.dart';
 import '../track/video_track_widget.dart';
+import 'is_speaking_indicator.dart';
+import 'participant_status_bar.dart';
 
 class ParticipantTileWidget extends StatelessWidget {
   const ParticipantTileWidget({

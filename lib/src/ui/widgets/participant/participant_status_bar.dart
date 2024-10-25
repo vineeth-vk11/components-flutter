@@ -5,10 +5,10 @@ import 'package:provider/provider.dart';
 import '../../../context/participant_context.dart';
 import '../../../context/track_reference_context.dart';
 import '../../../debug/logger.dart';
-import '../../builder/track/connection_quality_indicator.dart';
-import '../../builder/track/e2e_encryption_indicator.dart';
 import '../../builder/participant/participant_muted_indicator.dart';
 import '../../builder/participant/participant_name.dart';
+import '../../builder/track/connection_quality_indicator.dart';
+import '../../builder/track/e2e_encryption_indicator.dart';
 import 'connection_quality_indicator.dart';
 
 class ParticipantStatusBar extends StatelessWidget {
