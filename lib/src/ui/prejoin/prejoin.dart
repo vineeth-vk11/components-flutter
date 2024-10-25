@@ -5,11 +5,11 @@ import 'package:provider/provider.dart';
 import '../../context/room_context.dart';
 import '../../debug/logger.dart';
 import '../builder/camera_preview.dart';
-import '../builder/join_button.dart';
+import '../builder/room/join_button.dart';
 import '../widgets/camera_preview.dart';
-import '../widgets/camera_select_button.dart';
-import '../widgets/join_button.dart';
-import '../widgets/microphone_select_button.dart';
+import '../widgets/room/camera_select_button.dart';
+import '../widgets/room/join_button.dart';
+import '../widgets/room/microphone_select_button.dart';
 import 'text_input.dart';
 
 class Prejoin extends StatelessWidget {

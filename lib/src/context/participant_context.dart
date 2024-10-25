@@ -143,4 +143,6 @@ class ParticipantContext extends ChangeNotifier {
 
   List<TranscriptionSegment> _segments = [];
   List<TranscriptionSegment> get segments => _segments;
+
+  ParticipantKind get kind => _participant.kind;
 }
