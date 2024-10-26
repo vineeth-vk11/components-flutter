@@ -38,9 +38,8 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
 
-  final url = 'ws://192.168.2.141:7880';
-  final token =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzEzNjkzNjgsImlzcyI6IkFQSXJramtRYVZRSjVERSIsIm5hbWUiOiJmbHQiLCJuYmYiOjE3Mjk1NjkzNjgsInN1YiI6ImZsdCIsInZpZGVvIjp7InJvb20iOiJsaXZlIiwicm9vbUpvaW4iOnRydWV9fQ.HVjMK_t00FlF24xIn-IZot1ROeb6JjV8QstRf2577yw';
+  final url = 'wss://livekit.example.com';
+  final token = 'your_token_here';
 
   /// handle join button pressed, fetch connection details and connect to room.
   // ignore: unused_element
