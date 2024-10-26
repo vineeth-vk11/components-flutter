@@ -121,9 +121,10 @@ class MyHomePage extends StatelessWidget {
                                       showVideoTracks: true,
 
                                       /// layout builder
-                                      layoutBuilder: roomCtx.isPinnedTracksEmpty
-                                          ? const GridLayoutBuilder()
-                                          : const CarouselLayoutBuilder(),
+                                      layoutBuilder:
+                                          roomCtx.pinnedTracks.isNotEmpty
+                                              ? const CarouselLayoutBuilder()
+                                              : const GridLayoutBuilder(),
 
                                       /// participant builder
                                       participantBuilder: (context) {

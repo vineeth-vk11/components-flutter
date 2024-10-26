@@ -245,8 +245,6 @@ class RoomContext extends ChangeNotifier with ChatContextMixin {
   final List<String> _pinnedTracks = [];
   List<String> get pinnedTracks => _pinnedTracks;
 
-  bool get isPinnedTracksEmpty => _pinnedTracks.isEmpty;
-
   LocalVideoTrack? _localVideoTrack;
 
   LocalVideoTrack? get localVideoTrack => _localVideoTrack;
