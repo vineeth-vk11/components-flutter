@@ -8,6 +8,7 @@ import '../../../debug/logger.dart';
 import '../../../types/track_identifier.dart';
 import '../../layout/grid_layout.dart';
 import '../../layout/layouts.dart';
+import '../../layout/sorting.dart';
 import 'participant_track.dart';
 
 class ParticipantLoop extends StatelessWidget {
@@ -15,14 +16,13 @@ class ParticipantLoop extends StatelessWidget {
     super.key,
     required this.participantBuilder,
     this.layoutBuilder = const GridLayoutBuilder(),
-    this.sorting,
+    this.sorting = defaultSorting,
     this.showAudioTracks = false,
     this.showVideoTracks = true,
   });
 
   final WidgetBuilder participantBuilder;
-  final List<MapEntry<TrackIdentifier, TrackPublication?>> Function(
-      List<MapEntry<TrackIdentifier, TrackPublication?>> tracks)? sorting;
+  final List<TrackWidget> Function(List<TrackWidget> tracks)? sorting;
   final ParticipantLayoutBuilder layoutBuilder;
 
   final bool showAudioTracks;
@@ -76,10 +76,6 @@ class ParticipantLoop extends StatelessWidget {
               var trackMap = buildTracksMap(
                   showAudioTracks, showVideoTracks, participants);
 
-              if (sorting != null) {
-                trackMap = sorting!(trackMap);
-              }
-
               for (var item in trackMap) {
                 var identifier = item.key;
                 var track = item.value;
@@ -105,6 +101,9 @@ class ParticipantLoop extends StatelessWidget {
                     ),
                   );
                 }
+              }
+              if (sorting != null) {
+                trackWidgets = sorting!(trackWidgets);
               }
               return Selector<RoomContext, List<String>>(
                   selector: (context, pinnedTracks) => roomCtx.pinnedTracks,

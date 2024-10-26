@@ -145,4 +145,8 @@ class ParticipantContext extends ChangeNotifier {
   List<TranscriptionSegment> get segments => _segments;
 
   ParticipantKind get kind => _participant.kind;
+
+  DateTime? get lastSpokeAt => _participant.lastSpokeAt;
+
+  double get audioLevel => _participant.audioLevel;
 }
