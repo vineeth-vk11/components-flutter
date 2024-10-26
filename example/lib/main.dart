@@ -115,62 +115,58 @@ class MyHomePage extends StatelessWidget {
                                 flex: 5,
                                 child: Stack(
                                   children: <Widget>[
-                                    Expanded(
-                                      /// show participant loop
-                                      child: ParticipantLoop(
-                                        showAudioTracks: false,
-                                        showVideoTracks: true,
+                                    /// show participant loop
+                                    ParticipantLoop(
+                                      showAudioTracks: false,
+                                      showVideoTracks: true,
 
-                                        /// layout builder
-                                        layoutBuilder:
-                                            roomCtx.isPinnedTracksEmpty
-                                                ? const GridLayoutBuilder()
-                                                : const CarouselLayoutBuilder(),
+                                      /// layout builder
+                                      layoutBuilder: roomCtx.isPinnedTracksEmpty
+                                          ? const GridLayoutBuilder()
+                                          : const CarouselLayoutBuilder(),
 
-                                        /// participant builder
-                                        participantBuilder: (context) {
-                                          // build participant widget for each Track
-                                          return Padding(
-                                            padding: const EdgeInsets.all(2.0),
-                                            child: Stack(
-                                              children: [
-                                                /// video track widget in the background
+                                      /// participant builder
+                                      participantBuilder: (context) {
+                                        // build participant widget for each Track
+                                        return Padding(
+                                          padding: const EdgeInsets.all(2.0),
+                                          child: Stack(
+                                            children: [
+                                              /// video track widget in the background
 
-                                                IsSpeakingIndicator(builder:
-                                                    (context, isSpeaking) {
-                                                  return isSpeaking != null
-                                                      ? IsSpeakingIndicatorWidget(
-                                                          isSpeaking:
-                                                              isSpeaking,
-                                                          child:
-                                                              const VideoTrackWidget(),
-                                                        )
-                                                      : const VideoTrackWidget();
-                                                }),
+                                              IsSpeakingIndicator(builder:
+                                                  (context, isSpeaking) {
+                                                return isSpeaking != null
+                                                    ? IsSpeakingIndicatorWidget(
+                                                        isSpeaking: isSpeaking,
+                                                        child:
+                                                            const VideoTrackWidget(),
+                                                      )
+                                                    : const VideoTrackWidget();
+                                              }),
 
-                                                /// TODO: Add AudioTrackWidget or AgentVisualizerWidget later
+                                              /// TODO: Add AudioTrackWidget or AgentVisualizerWidget later
 
-                                                /// focus toggle button at the top right
-                                                const Positioned(
-                                                  top: 0,
-                                                  right: 0,
-                                                  child: FocusToggle(),
-                                                ),
+                                              /// focus toggle button at the top right
+                                              const Positioned(
+                                                top: 0,
+                                                right: 0,
+                                                child: FocusToggle(),
+                                              ),
 
-                                                /// track stats at the bottom right
-                                                const Positioned(
-                                                  top: 8,
-                                                  left: 0,
-                                                  child: TrackStatsWidget(),
-                                                ),
+                                              /// track stats at the bottom right
+                                              const Positioned(
+                                                top: 8,
+                                                left: 0,
+                                                child: TrackStatsWidget(),
+                                              ),
 
-                                                /// status bar at the bottom
-                                                const ParticipantStatusBar(),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      ),
+                                              /// status bar at the bottom
+                                              const ParticipantStatusBar(),
+                                            ],
+                                          ),
+                                        );
+                                      },
                                     ),
 
                                     /// show control bar at the bottom
