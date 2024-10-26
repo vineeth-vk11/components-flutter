@@ -28,7 +28,7 @@ class DisconnectButtonWidget extends StatelessWidget {
     return ElevatedButton(
       style: ButtonStyle(
         backgroundColor: WidgetStateProperty.all(
-            connected ? Colors.red : Colors.grey.withOpacity(0.6)),
+            connected ? Colors.red : Colors.grey.withOpacity(0.9)),
         foregroundColor: WidgetStateProperty.all(Colors.white),
         overlayColor:
             WidgetStateProperty.all(connected ? Colors.redAccent : Colors.grey),
