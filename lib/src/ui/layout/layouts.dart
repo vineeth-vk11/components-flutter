@@ -1,16 +1,17 @@
 import 'package:flutter/widgets.dart';
 
-class ParticipantIdentity {
-  const ParticipantIdentity({
-    required this.identity,
-    this.sid,
-  });
+import '../../types/track_identifier.dart';
 
-  final String identity;
-  final String? sid;
+class TrackWidget {
+  TrackWidget(this.trackIdentifier, this.widget);
+  final TrackIdentifier trackIdentifier;
+  final Widget widget;
 }
 
 abstract class ParticipantLayoutBuilder {
   Widget build(
-      BuildContext context, List<Widget> children, List<Widget>? pinned);
+    BuildContext context,
+    List<TrackWidget> children,
+    List<String> pinnedTracks,
+  );
 }

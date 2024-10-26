@@ -9,7 +9,10 @@ class GridLayoutBuilder implements ParticipantLayoutBuilder {
 
   @override
   Widget build(
-      BuildContext context, List<Widget> children, List<Widget>? pinned) {
+    BuildContext context,
+    List<TrackWidget> children,
+    List<String> pinnedTracks,
+  ) {
     var deviceScreenType = getDeviceType(MediaQuery.of(context).size);
     var orientation = MediaQuery.of(context).orientation;
     return GridView.count(
@@ -18,10 +21,7 @@ class GridLayoutBuilder implements ParticipantLayoutBuilder {
           ? 2
           : 4,
       childAspectRatio: 1.5,
-      children: [
-        if (pinned != null) ...pinned,
-        ...children,
-      ],
+      children: children.map((e) => e.widget).toList(),
     );
   }
 }

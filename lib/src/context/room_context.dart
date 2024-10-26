@@ -225,27 +225,27 @@ class RoomContext extends ChangeNotifier with ChatContextMixin {
   }
 
   void pinningTrack(String sid) {
-    _pinnedTrackSid.remove(sid);
-    _pinnedTrackSid.insert(0, sid);
+    _pinnedTracks.remove(sid);
+    _pinnedTracks.insert(0, sid);
     Debug.event('Pinning track: $sid');
     notifyListeners();
   }
 
   void unpinningTrack(String sid) {
-    _pinnedTrackSid.remove(sid);
+    _pinnedTracks.remove(sid);
     Debug.event('Unpinning track: $sid');
     notifyListeners();
   }
 
   void clearPinnedTracks() {
-    _pinnedTrackSid.clear();
+    _pinnedTracks.clear();
     notifyListeners();
   }
 
-  final List<String> _pinnedTrackSid = [];
-  List<String> get pinnedTracks => _pinnedTrackSid;
+  final List<String> _pinnedTracks = [];
+  List<String> get pinnedTracks => _pinnedTracks;
 
-  bool get isPinnedTracksEmpty => _pinnedTrackSid.isEmpty;
+  bool get isPinnedTracksEmpty => _pinnedTracks.isEmpty;
 
   LocalVideoTrack? _localVideoTrack;
 

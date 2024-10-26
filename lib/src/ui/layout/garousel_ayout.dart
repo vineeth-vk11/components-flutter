@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:math' as math;
 
 import 'package:flutter/widgets.dart';
@@ -11,20 +12,39 @@ class CarouselLayoutBuilder implements ParticipantLayoutBuilder {
 
   @override
   Widget build(
-      BuildContext context, List<Widget> children, List<Widget>? pinned) {
-    Widget? pinnedWidget;
+    BuildContext context,
+    List<TrackWidget> children,
+    List<String> pinnedTracks,
+  ) {
+    List<Widget> pinnedWidgets = [];
     List<Widget> otherWidgets = [];
 
-    if (pinned != null) {
-      pinnedWidget = pinned.firstOrNull;
-      if (children.length > 1) {
-        otherWidgets = pinned.skip(1).toList();
-        otherWidgets.addAll(children);
+    /// Move focused tracks to the pinned list
+    for (var sid in pinnedTracks) {
+      var widget = children
+          .where((element) => element.trackIdentifier.identifier == sid)
+          .map((e) => e.widget)
+          .firstOrNull;
+      if (widget != null) {
+        pinnedWidgets.add(widget);
       }
-    } else {
-      pinnedWidget = children.firstOrNull;
-      if (children.length > 1) {
-        otherWidgets = children.skip(1).toList();
+    }
+
+    Widget? singlePinnedWidget = pinnedWidgets.firstOrNull;
+    if (pinnedWidgets.length > 1) {
+      otherWidgets.addAll(pinnedWidgets.skip(1).toList());
+    }
+
+    for (var child in children) {
+      if (!pinnedTracks.contains(child.trackIdentifier.identifier)) {
+        otherWidgets.add(child.widget);
+      }
+    }
+
+    if (pinnedWidgets.isEmpty) {
+      singlePinnedWidget = otherWidgets.firstOrNull;
+      if (otherWidgets.length > 1) {
+        otherWidgets.removeAt(0);
       }
     }
 
@@ -49,7 +69,7 @@ class CarouselLayoutBuilder implements ParticipantLayoutBuilder {
               ),
             ),
           Expanded(
-            child: pinnedWidget ?? Container(),
+            child: singlePinnedWidget ?? Container(),
           ),
         ],
       );
@@ -70,7 +90,7 @@ class CarouselLayoutBuilder implements ParticipantLayoutBuilder {
             ),
           ),
         Expanded(
-          child: pinnedWidget ?? Container(),
+          child: singlePinnedWidget ?? Container(),
         ),
       ],
     );
