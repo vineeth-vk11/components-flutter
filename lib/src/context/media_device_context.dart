@@ -17,7 +17,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_background/flutter_background.dart';
-import 'package:flutter_webrtc/flutter_webrtc.dart' as rtc;
+import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:provider/provider.dart';
 
@@ -192,7 +192,7 @@ class MediaDeviceContext extends ChangeNotifier {
   Future<void> enableScreenShare(context) async {
     if (lkPlatformIsDesktop()) {
       try {
-        final source = await showDialog<rtc.DesktopCapturerSource>(
+        final source = await showDialog<DesktopCapturerSource>(
           context: context,
           builder: (context) => ScreenSelectDialog(),
         );
@@ -215,7 +215,7 @@ class MediaDeviceContext extends ChangeNotifier {
     }
     if (lkPlatformIs(PlatformType.android)) {
       // Android specific
-      bool hasCapturePermission = await rtc.Helper.requestCapturePermission();
+      bool hasCapturePermission = await Helper.requestCapturePermission();
       if (!hasCapturePermission) {
         return;
       }
