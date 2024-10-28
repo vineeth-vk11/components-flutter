@@ -6,6 +6,8 @@
   <img style="width:100%;" alt="The LiveKit icon, the name of the repository and some sample code in the background." src="https://raw.githubusercontent.com/livekit/components-flutter/main/.github/banner_light.png">
 </picture>
 
+[![pub package](https://img.shields.io/pub/v/livekit_components?label=livekit_components&color=blue)](https://pub.dev/packages/livekit_components)
+
 <!--END_BANNER_IMAGE-->
 
 # Flutter Components
