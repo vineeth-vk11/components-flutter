@@ -19,9 +19,7 @@ Use this SDK to add realtime video, audio and data features to your Flutter app.
 
 ## Introduction
 
-LiveKit component state management is based on [provider](https://pub.dev/packages/provider), including `RoomContext`, `MediaDeviceContext`, `ParticipantContext`, `TrackContext`, and `ChatContext`. You can render components in the corresponding Context, such as `Chat`, `ParticipantLoop`, `ControlBar`, `StatusBar`, `AudioTrack`, `VideoTrack`, `Toggle Buttons`.
-
-and you can create video conferencing, live streaming, or AI Agents apps with minimal lines of code.
+LiveKit component state management is based on [provider](https://pub.dev/packages/provider), you can create video conferencing, live streaming, or AI Agents apps with minimal lines of code.
 
 Please refer to the [flowchart](./docs/flowchart.md) for the widgets topology structure.
 
@@ -31,8 +29,12 @@ Add the following to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  livekit_components: ^0.1.0
+  livekit_components: ^1.0.0
 ```
+
+Then run `flutter pub get`.
+
+and follow this docs to configure your project for [iOS](https://github.com/livekit/client-sdk-flutter#ios) and [Android](https://github.com/livekit/client-sdk-flutter#android).
 
 ## Usage
 
@@ -80,6 +82,9 @@ class MyApp extends StatelessWidget {
                       /// participant builder
                       participantBuilder: (context) {
                         /// build participant widget for each Track
+                        /// return ParticipantTileWidget for each participant
+                        /// you can customize the widget as you want, please refer to the example
+                        /// https://github.com/livekit/components-flutter/blob/main/example/lib/main.dart#L130-L168
                         return const ParticipantTileWidget();
                       },
                     ),
@@ -97,6 +102,10 @@ class MyApp extends StatelessWidget {
   }
 }
 ```
+
+## Example
+
+You can find a complete example in the [example](./example) folder.
 
 <!--BEGIN_REPO_NAV-->
 <br/><table>

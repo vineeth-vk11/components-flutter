@@ -134,16 +134,18 @@ class MyHomePage extends StatelessWidget {
                                             children: [
                                               /// video track widget in the background
 
-                                              IsSpeakingIndicator(builder:
-                                                  (context, isSpeaking) {
-                                                return isSpeaking != null
-                                                    ? IsSpeakingIndicatorWidget(
-                                                        isSpeaking: isSpeaking,
-                                                        child:
-                                                            const VideoTrackWidget(),
-                                                      )
-                                                    : const VideoTrackWidget();
-                                              }),
+                                              IsSpeakingIndicator(
+                                                builder: (context, isSpeaking) {
+                                                  return isSpeaking != null
+                                                      ? IsSpeakingIndicatorWidget(
+                                                          isSpeaking:
+                                                              isSpeaking,
+                                                          child:
+                                                              const VideoTrackWidget(),
+                                                        )
+                                                      : const VideoTrackWidget();
+                                                },
+                                              ),
 
                                               /// TODO: Add AudioTrackWidget or AgentVisualizerWidget later
 
@@ -154,7 +156,7 @@ class MyHomePage extends StatelessWidget {
                                                 child: FocusToggle(),
                                               ),
 
-                                              /// track stats at the bottom right
+                                              /// track stats at the top left
                                               const Positioned(
                                                 top: 8,
                                                 left: 0,

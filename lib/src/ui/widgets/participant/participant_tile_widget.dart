@@ -55,10 +55,10 @@ class ParticipantTileWidget extends StatelessWidget {
           child: FocusToggle(),
         ),
 
-        /// track stats at the bottom right
+        /// track stats at the top left
         const Positioned(
-          bottom: 30,
-          right: 0,
+          top: 8,
+          left: 0,
           child: TrackStatsWidget(),
         ),
 
