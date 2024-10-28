@@ -1,3 +1,17 @@
+// Copyright 2024 LiveKit, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 import 'dart:async';
 
 import 'package:flutter/material.dart' hide ConnectionState;
@@ -35,6 +49,9 @@ class RoomContext extends ChangeNotifier with ChatContextMixin {
     bool connect = false,
     RoomOptions roomOptions = const RoomOptions(),
     ConnectOptions? connectOptions,
+    this.onConnected,
+    this.onDisconnected,
+    this.onError,
   })  : _url = url,
         _token = token,
         _connectOptions = connectOptions {
@@ -51,6 +68,7 @@ class RoomContext extends ChangeNotifier with ChatContextMixin {
         _activeRecording = event.room.isRecording;
         _roomName = event.room.name;
         _buildParticipants();
+        onConnected?.call();
         notifyListeners();
       })
       ..on<RoomDisconnectedEvent>((event) {
@@ -59,6 +77,7 @@ class RoomContext extends ChangeNotifier with ChatContextMixin {
         chatContextSetup(null, null);
         _connected = false;
         _participants.clear();
+        onDisconnected?.call();
         notifyListeners();
       })
       ..on<RoomReconnectedEvent>((event) {
@@ -152,6 +171,7 @@ class RoomContext extends ChangeNotifier with ChatContextMixin {
       _connectionState = ConnectionState.disconnected;
       _connecting = false;
       notifyListeners();
+      onError?.call(e as LiveKitException?);
       rethrow;
     }
   }
@@ -160,6 +180,12 @@ class RoomContext extends ChangeNotifier with ChatContextMixin {
     await _room.disconnect();
     notifyListeners();
   }
+
+  final Function()? onConnected;
+
+  final Function()? onDisconnected;
+
+  final Function(LiveKitException? error)? onError;
 
   final ConnectOptions? _connectOptions;
   FastConnectOptions? _fastConnectOptions;
