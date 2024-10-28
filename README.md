@@ -21,7 +21,7 @@ Use this SDK to add realtime video, audio and data features to your Flutter app.
 
 LiveKit component state management is based on [provider](https://pub.dev/packages/provider), you can create video conferencing, live streaming, or AI Agents apps with minimal lines of code.
 
-Please refer to the [flowchart](./docs/flowchart.md) for the widgets topology structure.
+Please refer to the [flowchart](./flowchart.md) for the widgets topology structure.
 
 ## Installation
 
