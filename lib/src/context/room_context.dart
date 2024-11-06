@@ -59,7 +59,7 @@ class RoomContext extends ChangeNotifier with ChatContextMixin {
     _listener = _room.createListener();
     _listener
       ..on<RoomConnectedEvent>((event) {
-        Debug.event('RoomContext: RoomConnectedEvent');
+        Debug.event('RoomContext: RoomConnectedEvent $roomName');
         chatContextSetup(_listener, _room.localParticipant!);
         _connectionState = _room.connectionState;
         _connected = true;
@@ -72,7 +72,7 @@ class RoomContext extends ChangeNotifier with ChatContextMixin {
         notifyListeners();
       })
       ..on<RoomDisconnectedEvent>((event) {
-        Debug.event('RoomContext: RoomDisconnectedEvent');
+        Debug.event('RoomContext: RoomDisconnectedEvent $roomName');
         _connectionState = _room.connectionState;
         chatContextSetup(null, null);
         _connected = false;
@@ -81,18 +81,18 @@ class RoomContext extends ChangeNotifier with ChatContextMixin {
         notifyListeners();
       })
       ..on<RoomReconnectedEvent>((event) {
-        Debug.event('RoomContext: RoomReconnectedEvent');
+        Debug.event('RoomContext: RoomReconnectedEvent $roomName');
         _connectionState = _room.connectionState;
         notifyListeners();
       })
       ..on<RoomReconnectingEvent>((event) {
-        Debug.event('RoomContext: RoomReconnectingEvent');
+        Debug.event('RoomContext: RoomReconnectingEvent $roomName');
         _connectionState = _room.connectionState;
         notifyListeners();
       })
       ..on<RoomMetadataChangedEvent>((event) {
         Debug.event(
-            'RoomContext: RoomMetadataChangedEvent metadata = ${event.metadata}');
+            'RoomContext: RoomMetadataChangedEvent $roomName metadata = ${event.metadata}');
         _roomMetadata = event.metadata;
         notifyListeners();
       })
@@ -104,22 +104,22 @@ class RoomContext extends ChangeNotifier with ChatContextMixin {
       })
       ..on<ParticipantConnectedEvent>((event) {
         Debug.event(
-            'RoomContext: ParticipantConnectedEvent participant = ${event.participant.identity}');
+            'RoomContext: ParticipantConnectedEvent $roomName participant = ${event.participant.identity}');
         _buildParticipants();
       })
       ..on<ParticipantDisconnectedEvent>((event) {
         Debug.event(
-            'RoomContext: ParticipantDisconnectedEvent participant = ${event.participant.identity}');
+            'RoomContext: ParticipantDisconnectedEvent $roomName participant = ${event.participant.identity}');
         _participants
             .removeWhere((p) => p.identity == event.participant.identity);
         notifyListeners();
       })
       ..on<TrackPublishedEvent>((event) {
-        Debug.event('ParticipantContext: TrackPublishedEvent');
+        Debug.event('ParticipantContext: TrackPublishedEvent $roomName');
         _buildParticipants();
       })
       ..on<TrackUnpublishedEvent>((event) {
-        Debug.event('ParticipantContext: TrackUnpublishedEvent');
+        Debug.event('ParticipantContext: TrackUnpublishedEvent $roomName');
         _buildParticipants();
       })
       ..on<LocalTrackPublishedEvent>((event) {
@@ -228,6 +228,8 @@ class RoomContext extends ChangeNotifier with ChatContextMixin {
   /// Get the connected status.
   bool get connected => _connected;
 
+  LocalParticipant? get localParticipant => _room.localParticipant;
+
   int get participantCount => _participants.length;
 
   final List<Participant> _participants = [];
@@ -305,8 +307,13 @@ class RoomContext extends ChangeNotifier with ChatContextMixin {
   }
 
   @override
-  void dispose() {
-    _listener.dispose();
+  void dispose() async {
+    await _listener.dispose();
+    Debug.event('RoomContext disposed ${roomName ?? ''}');
+    if (_room.connectionState == ConnectionState.connected) {
+      await _room.disconnect();
+    }
+    await _room.dispose();
     super.dispose();
   }
 }

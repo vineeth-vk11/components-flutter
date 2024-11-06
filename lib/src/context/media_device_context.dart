@@ -62,9 +62,12 @@ class MediaDeviceContext extends ChangeNotifier {
 
   LocalAudioTrack? get localAudioTrack => _roomCtx.localAudioTrack;
 
+  StreamSubscription? _deviceChangeSub;
+
   Future<void> loadDevices() async {
     _loadDevices(await Hardware.instance.enumerateDevices());
-    Hardware.instance.onDeviceChange.stream.listen(_loadDevices);
+    _deviceChangeSub =
+        Hardware.instance.onDeviceChange.stream.listen(_loadDevices);
   }
 
   _loadDevices(List<MediaDevice> devices) {
@@ -310,5 +313,11 @@ class MediaDeviceContext extends ChangeNotifier {
       return;
     }
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _deviceChangeSub?.cancel();
   }
 }
