@@ -27,12 +27,23 @@ class DisconnectButtonWidget extends StatelessWidget {
     this.onPressed,
     this.title = 'Leave',
     this.showLabel = true,
+    this.backgroundColor = Colors.grey,
+    this.selectedColor = Colors.red,
+    this.foregroundColor = Colors.white,
+    this.overlayColor = Colors.grey,
+    this.selectedOverlayColor = Colors.redAccent,
   });
 
   final bool connected;
   final RoomContext roomCtx;
   final String title;
   final bool showLabel;
+
+  final Color backgroundColor;
+  final Color foregroundColor;
+  final Color overlayColor;
+  final Color selectedColor;
+  final Color selectedOverlayColor;
 
   final Function()? onPressed;
 
@@ -42,10 +53,10 @@ class DisconnectButtonWidget extends StatelessWidget {
     return ElevatedButton(
       style: ButtonStyle(
         backgroundColor: WidgetStateProperty.all(
-            connected ? Colors.red : Colors.grey.withOpacity(0.9)),
-        foregroundColor: WidgetStateProperty.all(Colors.white),
-        overlayColor:
-            WidgetStateProperty.all(connected ? Colors.redAccent : Colors.grey),
+            connected ? selectedColor : backgroundColor.withValues(alpha: 0.9)),
+        foregroundColor: WidgetStateProperty.all(foregroundColor),
+        overlayColor: WidgetStateProperty.all(
+            connected ? selectedOverlayColor : overlayColor),
         shape: WidgetStateProperty.all(
           const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(
@@ -54,9 +65,9 @@ class DisconnectButtonWidget extends StatelessWidget {
           ),
         ),
         padding: WidgetStateProperty.all(
-          deviceScreenType == DeviceScreenType.desktop || lkPlatformIsDesktop()
-              ? const EdgeInsets.fromLTRB(10, 20, 10, 20)
-              : const EdgeInsets.all(12),
+          (lkPlatformIsMobile() || lkPlatformIsWebMobile())
+              ? const EdgeInsets.all(12)
+              : const EdgeInsets.fromLTRB(12, 20, 12, 20),
         ),
       ),
       onPressed: () =>
